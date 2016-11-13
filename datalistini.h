@@ -1,11 +1,15 @@
-#ifndef DATALISTINO_H
-#define DATALISTINO_H
+#ifndef DATALISTINI_H
+#define DATALISTINI_H
 
+#include <QSqlTableModel>
 
-class DataListino
+class DataListini : public QSqlTableModel
 {
+    Q_OBJECT
 public:
-    DataListino();
+    DataListini(QObject *parent=0);
+private:
+    void setupModel();
 };
 
-#endif // DATALISTINO_H
+#endif // DATALISTINI_H
