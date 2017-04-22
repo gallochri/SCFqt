@@ -1,7 +1,7 @@
 #include "mainwindow.h"
 #include <QApplication>
-#include <QSqlDatabase>
 #include <QDebug>
+#include <QSettings>
 
 int main(int argc, char *argv[])
 {
@@ -12,20 +12,9 @@ int main(int argc, char *argv[])
     qApp->setOrganizationName("gallochri.com");
     qApp->setOrganizationDomain("www.gallochri.com");
 
-    QSqlDatabase db = QSqlDatabase::addDatabase("QMYSQL");
-    db.setHostName("freebsdserver");
-    db.setDatabaseName("metel");
-    db.setUserName("metel");
-    db.setPassword("metel");
+    MainWindow *mainWin = new MainWindow;
+    mainWin->setWindowTitle (QString(APP_NAME).replace("_"," "));
+    mainWin->show();
 
-    if (db.open()){
-        qDebug() << "DB connection successfull";
-        db.close();
-        MainWindow *mainWin = new MainWindow;
-        mainWin->setWindowTitle (QString(APP_NAME).replace("_"," "));
-        mainWin->show();
-    } else {
-        qDebug() << "Problem with DB connection";
-    }
     return app.exec();
 }
