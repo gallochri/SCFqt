@@ -3,6 +3,7 @@
 
 #include <QWidget>
 #include <QWizard>
+#include <QLabel>
 
 class DbWizard : public QWizard
 {
@@ -11,10 +12,18 @@ class DbWizard : public QWizard
 public:
     DbWizard(QWidget *parent = 0);
     void accept() override;
-
-signals:
-
-public slots:
 };
+
+class IntroPage : public QWizardPage
+{
+    Q_OBJECT
+
+public:
+    IntroPage(QWidget *parent = 0);
+
+private:
+    QLabel *label;
+};
+
 
 #endif // DBWIZARD_H

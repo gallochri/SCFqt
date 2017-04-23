@@ -2,5 +2,6 @@
     <qresource prefix="/">
         <file>images/suse_green_plasma_mosaic.jpg</file>
         <file>images/banner.jpg</file>
+        <file>images/watermark.jpg</file>
     </qresource>
 </RCC>

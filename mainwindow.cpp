@@ -1,5 +1,6 @@
 #include "mainwindow.h"
 #include "ui_mainwindow.h"
+#include "dbwizard.h"
 
 #include <QDebug>
 
@@ -28,14 +29,18 @@ MainWindow::MainWindow(QWidget *parent) :
     db.setPassword(settings.value(KEY_PWD).toString());
 
     settings.endGroup();
+    // Testing code
+    settings.beginGroup(KEY);
+    settings.setValue(KEY_HOST, "freebsdserver2");
+    settings.setValue(KEY_DB, "testdb");
+    settings.setValue(KEY_USER, "gallochri");
+    settings.setValue(KEY_PWD, "password");
+    settings.endGroup();
+
     if (!db.open()){
             qDebug() << "Problem with DB connection";
-            bool ok;
-            QString name = QInputDialog::getText(this,
-                                                 tr("Add task"),
-                                                 tr("Task name"), QLineEdit::Normal,
-                                                 tr("Untitled task"), &ok);
-            return;
+            DbWizard *wizard = new DbWizard;
+            wizard->show();
         }
     qDebug() << "DB connection successfull";
     db.close();
