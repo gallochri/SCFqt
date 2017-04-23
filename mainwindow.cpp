@@ -5,6 +5,7 @@
 
 #include <QSettings>
 #include <QSqlDatabase>
+#include <QInputDialog>
 
 #define KEY "db_connection"
 #define KEY_HOST "hostname"
@@ -29,7 +30,12 @@ MainWindow::MainWindow(QWidget *parent) :
     settings.endGroup();
     if (!db.open()){
             qDebug() << "Problem with DB connection";
-//            return;
+            bool ok;
+            QString name = QInputDialog::getText(this,
+                                                 tr("Add task"),
+                                                 tr("Task name"), QLineEdit::Normal,
+                                                 tr("Untitled task"), &ok);
+            return;
         }
     qDebug() << "DB connection successfull";
     db.close();

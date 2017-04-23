@@ -15,16 +15,23 @@ DEFINES += QT_DEPRECATED_WARNINGS
 
 SOURCES += main.cpp\
         mainwindow.cpp \
-        datalistini.cpp
+        datalistini.cpp \
+    dbwizard.cpp
 
 HEADERS  += mainwindow.h \
-            datalistini.h
+            datalistini.h \
+    dbwizard.h
 
 FORMS    += mainwindow.ui
 
 DISTFILES += \
-    .gitignore
+    .gitignore \
+    LICENSE \
+    README.md
 
 DEFINES += APP_NAME=\\\"SCFqt\\\"
 VERSION = 0.0.2
 DEFINES += APP_VERSION=\\\"$$VERSION\\\"
+
+RESOURCES += \
+    resources.qrc
