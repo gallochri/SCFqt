@@ -1,6 +1,8 @@
 #include "dbwizard.h"
 #include <QtWidgets>
 #include <QBoxLayout>
+#include <QSettings>
+#include <QDebug>
 
 DbWizard::DbWizard(QWidget *parent) : QWizard(parent)
 {
@@ -15,11 +17,15 @@ DbWizard::DbWizard(QWidget *parent) : QWizard(parent)
 }
 
 void DbWizard::accept(){
-//    QByteArray hostname = field("hostName").toByteArray();
-//    QByteArray database = field("database").toByteArray();
-//    QByteArray username = field("username").toByteArray();
-//    QByteArray password = field("password").toByteArray();
+    QByteArray hostname = field("hostname").toString();
+    QByteArray database = field("database").toByteArray();
+    QByteArray username = field("username").toByteArray();
+    QByteArray password = field("password").toByteArray();
+//    qDebug() << __func__ << hostname << database << username << password;
     //TODO code for store in settings file
+    QSettings *settings;
+    settings->beginGroup(KEY);
+    settings->setValue(hostname, hostname);
     QDialog::accept();
 }
 
@@ -74,6 +80,12 @@ DbConfigPage::DbConfigPage(QWidget *parent):QWizardPage(parent){
     layout->addWidget(passwordLabel,3,0);
     layout->addWidget(passwordLineEdit,3,1);
     setLayout(layout);
+
+    registerField("hostname", hostnameLineEdit);
+    registerField("database", databaseLineEdit);
+    registerField("username", usernameLineEdit);
+    registerField("password", passwordLineEdit);
+
 }
 
 ConclusionPage::ConclusionPage(QWidget *parent)
