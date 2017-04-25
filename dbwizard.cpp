@@ -17,15 +17,15 @@ DbWizard::DbWizard(QWidget *parent) : QWizard(parent)
 }
 
 void DbWizard::accept(){
-    QByteArray hostname = field("hostname").toString();
-    QByteArray database = field("database").toByteArray();
-    QByteArray username = field("username").toByteArray();
-    QByteArray password = field("password").toByteArray();
-//    qDebug() << __func__ << hostname << database << username << password;
+/**    QString host = field("hostname").toString();
+    QString db = field("database").toString();
+    QString user = field("username").toString();
+    QString pass = field("password".toString());
+//    qDebug() << __func__ << host << db << user << pass;
     //TODO code for store in settings file
     QSettings *settings;
-    settings->beginGroup(KEY);
-    settings->setValue(hostname, hostname);
+    settings->beginGroup("db_connection");
+    settings->setValue(hostname, host);**/
     QDialog::accept();
 }
 

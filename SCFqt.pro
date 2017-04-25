@@ -16,11 +16,13 @@ DEFINES += QT_DEPRECATED_WARNINGS
 SOURCES += main.cpp\
         mainwindow.cpp \
         datalistini.cpp \
-    dbwizard.cpp
+    dbwizard.cpp \
+    config.cpp
 
 HEADERS  += mainwindow.h \
             datalistini.h \
-    dbwizard.h
+    dbwizard.h \
+    config.h
 
 FORMS    += mainwindow.ui
 
