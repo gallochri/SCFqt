@@ -8,7 +8,8 @@ DbWizard::DbWizard(QWidget *parent) : QWizard(parent)
     addPage(new DbConfigPage);
     addPage(new ConclusionPage);
 
-    setPixmap(QWizard::BannerPixmap, QPixmap(":/images/banner.jpg"));
+    setPixmap(QWizard::BannerPixmap, QPixmap(":/images/banner.png"));
+    setPixmap(QWizard::BackgroundPixmap, QPixmap(":/images/background.png"));
 
     setWindowTitle(QString(APP_NAME).replace("_"," "));
 }
@@ -26,7 +27,7 @@ IntroPage::IntroPage(QWidget *parent)
     : QWizardPage(parent)
 {
     setTitle(tr("Introduction"));
-    setPixmap(QWizard::WatermarkPixmap, QPixmap(":/images/watermark.jpg"));
+    setPixmap(QWizard::WatermarkPixmap, QPixmap(":/images/watermark.png"));
 
     label = new QLabel(tr("It seems that the database configuration does not exist"
                           " or is incorrect. "
@@ -42,7 +43,7 @@ IntroPage::IntroPage(QWidget *parent)
 DbConfigPage::DbConfigPage(QWidget *parent):QWizardPage(parent){
     setTitle(tr("Database configuration"));
     setSubTitle(tr("Specify information on how to connect to db"));
-    setPixmap(QWizard::LogoPixmap, QPixmap(":/images/icon.jpg"));
+    setPixmap(QWizard::LogoPixmap, QPixmap(":/images/logo.png"));
 
     hostnameLabel = new QLabel(tr("&Hostname:"));
     hostnameLineEdit = new QLineEdit;
@@ -79,7 +80,7 @@ ConclusionPage::ConclusionPage(QWidget *parent)
     : QWizardPage(parent)
 {
     setTitle(tr("Conclusion"));
-    setPixmap(QWizard::WatermarkPixmap, QPixmap(":/images/watermark.jpg"));
+    setPixmap(QWizard::WatermarkPixmap, QPixmap(":/images/watermark.png"));
 
     label = new QLabel;
     label->setWordWrap(true);
