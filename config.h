@@ -9,6 +9,7 @@ class Config
 public:
     Config();
     QString loadConfig(QString key);
+    void writeConfig(QString key, QString val);
 };
 
 #endif // CONFIG_H

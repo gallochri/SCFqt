@@ -7,11 +7,13 @@
 #include <QDebug>
 #include <QDialog>
 #include <QDesktopWidget>
+
 #define KEY "db_connection"
 #define KEY_HOST "hostname"
 #define KEY_DB "database"
 #define KEY_USER "username"
 #define KEY_PWD "password"
+
 int main(int argc, char *argv[])
 {
     QApplication app(argc, argv);
@@ -32,20 +34,13 @@ int main(int argc, char *argv[])
     QString user = conf.loadConfig(KEY_USER);
     QString pass = conf.loadConfig(KEY_PWD);
 
+    //Set DB connection
     QSqlDatabase db = QSqlDatabase::addDatabase("QMYSQL");
     db.setHostName(host);
     db.setDatabaseName(dbs);
     db.setUserName(user);
     db.setPassword(pass);
-/**
-    // TODO write down a testing config file
-    settings.beginGroup(KEY);
-    settings.setValue(KEY_HOST, "freebsdserver2");
-    settings.setValue(KEY_DB, "testdb");
-    settings.setValue(KEY_USER, "gallochri");
-    settings.setValue(KEY_PWD, "password");
-    settings.endGroup();
-**/
+
     //Test DB connection
     if (!db.open()){
         qDebug() << "Problem with DB connection";

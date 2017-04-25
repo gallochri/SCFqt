@@ -1,8 +1,16 @@
 #include "dbwizard.h"
+#include "config.h"
+
 #include <QtWidgets>
 #include <QBoxLayout>
 #include <QSettings>
 #include <QDebug>
+
+#define KEY "db_connection"
+#define KEY_HOST "hostname"
+#define KEY_DB "database"
+#define KEY_USER "username"
+#define KEY_PWD "password"
 
 DbWizard::DbWizard(QWidget *parent) : QWizard(parent)
 {
@@ -17,15 +25,18 @@ DbWizard::DbWizard(QWidget *parent) : QWizard(parent)
 }
 
 void DbWizard::accept(){
-/**    QString host = field("hostname").toString();
+    Config conf;
+
+    QString host = field("hostname").toString();
     QString db = field("database").toString();
     QString user = field("username").toString();
-    QString pass = field("password".toString());
-//    qDebug() << __func__ << host << db << user << pass;
-    //TODO code for store in settings file
-    QSettings *settings;
-    settings->beginGroup("db_connection");
-    settings->setValue(hostname, host);**/
+    QString pass = field("password").toString();
+//  qDebug() << __func__ << host << db << user << pass;
+
+    conf.writeConfig(KEY_HOST,host);
+    conf.writeConfig(KEY_DB,db);
+    conf.writeConfig(KEY_USER,user);
+    conf.writeConfig(KEY_PWD,pass);
     QDialog::accept();
 }
 
@@ -106,7 +117,8 @@ void ConclusionPage::initializePage()
 {
     QString finishText = wizard()->buttonText(QWizard::FinishButton);
     finishText.remove('&');
-    label->setText(tr("Click %1 to generate the class skeleton.")
+    label->setText(tr("Setup wizard is terminated. Click %1 to start"
+                      " using your connection configuration.")
                    .arg(finishText));
 }
 

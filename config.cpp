@@ -29,5 +29,13 @@ QString Config::loadConfig(QString key)
     return configValue;
 }
 
+void Config::writeConfig(QString key, QString val)
+{
+    QSettings settings;
+    settings.beginGroup(KEY);
+    settings.setValue(key,val);
+    settings.endGroup();
+}
+
 
 
