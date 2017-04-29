@@ -43,7 +43,7 @@ int main(int argc, char *argv[])
 
     //Test DB connection
     if (!db.open()){
-        qDebug() << "Problem with DB connection";
+        qDebug() << __func__ << "Connection problem!";
 
         //Start DB config wizard
         DbWizard *wizard = new DbWizard(mainWin);
@@ -53,6 +53,8 @@ int main(int argc, char *argv[])
         wizard->move(QPoint(screenRect.width()/3 - mSize.width()/2,
                               screenRect.height()/2 - mSize.height()/2 ) );
         wizard->show();
+    } else {
+        qDebug() << __func__ <<"Connection successfull!";
     }
     db.close();
     return app.exec();
