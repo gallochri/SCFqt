@@ -1,16 +1,10 @@
-#include "dbwizard.h"
-#include "config.h"
-
 #include <QtWidgets>
 #include <QBoxLayout>
 #include <QSettings>
 #include <QDebug>
 
-#define KEY "db_connection"
-#define KEY_HOST "hostname"
-#define KEY_DB "database"
-#define KEY_USER "username"
-#define KEY_PWD "password"
+#include "dbwizard.h"
+#include "config.h"
 
 DbWizard::DbWizard(QWidget *parent) : QWizard(parent)
 {

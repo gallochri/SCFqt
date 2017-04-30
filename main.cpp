@@ -1,18 +1,12 @@
-#include "mainwindow.h"
-#include "dbwizard.h"
-#include "config.h"
-
 #include <QApplication>
 #include <QSqlDatabase>
 #include <QDebug>
 #include <QDialog>
 #include <QDesktopWidget>
 
-#define KEY "db_connection"
-#define KEY_HOST "hostname"
-#define KEY_DB "database"
-#define KEY_USER "username"
-#define KEY_PWD "password"
+#include "mainwindow.h"
+#include "dbwizard.h"
+#include "config.h"
 
 int main(int argc, char *argv[])
 {
@@ -43,7 +37,7 @@ int main(int argc, char *argv[])
 
     //Test DB connection
     if (!db.open()){
-        qDebug() << __func__ << "Connection problem!";
+        qDebug() << __func__ << ":Connection problem!";
 
         //Start DB config wizard
         DbWizard *wizard = new DbWizard(mainWin);
@@ -54,7 +48,7 @@ int main(int argc, char *argv[])
                               screenRect.height()/2 - mSize.height()/2 ) );
         wizard->show();
     } else {
-        qDebug() << __func__ <<"Connection successfull!";
+        qDebug() << __func__ <<":Connection successfull!";
     }
     db.close();
     return app.exec();

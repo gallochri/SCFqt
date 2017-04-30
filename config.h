@@ -4,6 +4,12 @@
 #include <QSettings>
 #include <QFile>
 
+#define KEY "db_connection"
+#define KEY_HOST "hostname"
+#define KEY_DB "database"
+#define KEY_USER "username"
+#define KEY_PWD "password"
+
 class Config
 {
 public:
