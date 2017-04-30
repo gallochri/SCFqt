@@ -5,6 +5,7 @@
 #include <QWizard>
 #include <QLabel>
 #include <QLineEdit>
+#include <QCheckBox>
 
 class DbWizard : public QWizard
 {
@@ -43,6 +44,9 @@ private:
     QLabel *passwordLabel;
     QLineEdit *passwordLineEdit;
 
+    QCheckBox *showPassCheck;
+private slots:
+    void on_showPassCheck_stateChanged();
 };
 
 class ConclusionPage : public QWizardPage

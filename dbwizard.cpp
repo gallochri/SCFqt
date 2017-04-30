@@ -40,10 +40,10 @@ IntroPage::IntroPage(QWidget *parent)
     setTitle(tr("Introduction"));
     setPixmap(QWizard::WatermarkPixmap, QPixmap(":/images/watermark.png"));
 
-    label = new QLabel(tr("It seems that the database configuration does not exist"
+    label = new QLabel(tr("It seems that the configuration does not work "
                           " or is incorrect. "
-                          "Fill in the fields on the next tab to retry the connection"
-                          " to the database."));
+                          "Fill in the fields on the next wizard page"
+                          " and try the connection to the database."));
     label->setWordWrap(true);
 
     QVBoxLayout *layout = new QVBoxLayout;
@@ -87,7 +87,8 @@ DbConfigPage::DbConfigPage(QWidget *parent):QWizardPage(parent){
     usernameLabel->setBuddy(usernameLabel);
 
     passwordLabel = new QLabel(tr("&Password:"));
-    passwordLineEdit = new QLineEdit;
+    passwordLineEdit = new QLineEdit;  
+    showPassCheck = new QCheckBox("&Show password");
     passwordLineEdit->setEchoMode(QLineEdit::Password);
     if (!pass.isEmpty()){
         passwordLineEdit->setText(pass);
@@ -103,6 +104,7 @@ DbConfigPage::DbConfigPage(QWidget *parent):QWizardPage(parent){
     layout->addWidget(usernameLineEdit,2,1);
     layout->addWidget(passwordLabel,3,0);
     layout->addWidget(passwordLineEdit,3,1);
+    layout->addWidget(showPassCheck,3,2);
     setLayout(layout);
 
     registerField("hostname", hostnameLineEdit);
@@ -110,6 +112,16 @@ DbConfigPage::DbConfigPage(QWidget *parent):QWizardPage(parent){
     registerField("username", usernameLineEdit);
     registerField("password", passwordLineEdit);
 
+    connect(showPassCheck,
+            SIGNAL(stateChanged(int)),
+            this,
+            SLOT(on_showPassCheck_stateChanged())
+            );
+}
+
+void DbConfigPage::on_showPassCheck_stateChanged(){
+    passwordLineEdit->setEchoMode(showPassCheck->checkState() == Qt::Checked ?
+                                      QLineEdit::Normal : QLineEdit::Password );
 }
 
 ConclusionPage::ConclusionPage(QWidget *parent)
@@ -134,4 +146,3 @@ void ConclusionPage::initializePage()
                       " using your connection configuration.")
                    .arg(finishText));
 }
-
