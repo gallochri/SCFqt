@@ -4,5 +4,5 @@ Comment=Speriamo che funzioni
 GenericName=SCFqt
 Exec=SCFqt
 Icon=scfqt
-Categories=Productivity;Databases;Clients;
+Categories=Office;Database;
 Type=Application
