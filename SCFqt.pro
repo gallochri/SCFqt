@@ -29,7 +29,8 @@ FORMS    += mainwindow.ui
 DISTFILES += \
     .gitignore \
     LICENSE \
-    README.md
+    README.md \
+    SCFqt.desktop
 
 DEFINES += APP_NAME=\\\"SCFqt\\\"
 VERSION = 0.0.2

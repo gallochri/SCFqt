@@ -1,0 +1,9 @@
+Desktop Entry]
+Name=SCFqt
+Comment=Speriamo che funzioni
+GenericName=SCFqt
+Exec=SCFqt
+Icon=scfqt
+Categories=Development;
+Type=Application
+X-SuSE-translate=false
