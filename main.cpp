@@ -39,18 +39,11 @@ int main(int argc, char *argv[])
         if (!db.open()){
             qDebug() << __func__ << ":Connection problem!";
             //Start DB config wizard
-            DbWizard *wizard = new DbWizard(mainWin);
-            //Center the wizard dialog
-            QSize mSize = wizard->sizeHint();
-            const QRect screenRect = QApplication::desktop()->screenGeometry();
-            wizard->move(QPoint(screenRect.width()/3 - mSize.width()/2,
-                                screenRect.height()/2 - mSize.height()/2 ) );
-            wizard->show();
+            mainWin->startWizard(mainWin);
         } else {
             qDebug() << __func__ <<":Connection successfull!";
         }
     }
-
     QSqlDatabase::removeDatabase("mainDB");
     return app.exec();
 }

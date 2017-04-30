@@ -5,5 +5,8 @@
         <file>images/banner.png</file>
         <file>images/watermark.png</file>
         <file>images/background.png</file>
+        <file>images/QtIcon.png</file>
+        <file>images/application-exit.png</file>
+        <file>images/tools-wizard.png</file>
     </qresource>
 </RCC>

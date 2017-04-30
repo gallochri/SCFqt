@@ -33,7 +33,7 @@ DISTFILES += \
     SCFqt.desktop
 
 DEFINES += APP_NAME=\\\"SCFqt\\\"
-VERSION = 0.0.2
+VERSION = 0.0.1
 DEFINES += APP_VERSION=\\\"$$VERSION\\\"
 
 RESOURCES += \
