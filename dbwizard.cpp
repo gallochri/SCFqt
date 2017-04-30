@@ -1,7 +1,8 @@
-#include <QtWidgets>
+﻿#include <QtWidgets>
 #include <QBoxLayout>
 #include <QSettings>
 #include <QDebug>
+#include <QSqlDatabase>
 
 #include "dbwizard.h"
 #include "config.h"
@@ -25,7 +26,7 @@ void DbWizard::accept(){
     QString db = field("database").toString();
     QString user = field("username").toString();
     QString pass = field("password").toString();
-//  qDebug() << __func__ << host << db << user << pass;
+    //  qDebug() << __func__ << host << db << user << pass;
 
     conf.writeConfig(KEY_HOST,host);
     conf.writeConfig(KEY_DB,db);
@@ -87,13 +88,17 @@ DbConfigPage::DbConfigPage(QWidget *parent):QWizardPage(parent){
     usernameLabel->setBuddy(usernameLabel);
 
     passwordLabel = new QLabel(tr("&Password:"));
-    passwordLineEdit = new QLineEdit;  
+    passwordLineEdit = new QLineEdit;
     showPassCheck = new QCheckBox("&Show password");
     passwordLineEdit->setEchoMode(QLineEdit::Password);
     if (!pass.isEmpty()){
         passwordLineEdit->setText(pass);
     }
     passwordLabel->setBuddy(passwordLabel);
+
+    QString status = "Test Result";
+    connectionStatus = new QLabel(status);
+    testConnection = new QPushButton(tr("&Test"));
 
     QGridLayout *layout = new QGridLayout;
     layout->addWidget(hostnameLabel, 0,0);
@@ -105,6 +110,8 @@ DbConfigPage::DbConfigPage(QWidget *parent):QWizardPage(parent){
     layout->addWidget(passwordLabel,3,0);
     layout->addWidget(passwordLineEdit,3,1);
     layout->addWidget(showPassCheck,3,2);
+    layout->addWidget(connectionStatus,4,1);
+    layout->addWidget(testConnection,4,2);
     setLayout(layout);
 
     registerField("hostname", hostnameLineEdit);
@@ -115,13 +122,42 @@ DbConfigPage::DbConfigPage(QWidget *parent):QWizardPage(parent){
     connect(showPassCheck,
             SIGNAL(stateChanged(int)),
             this,
-            SLOT(on_showPassCheck_stateChanged())
-            );
+            SLOT(on_showPassCheck_stateChanged()));
+
+    connect(testConnection,
+            SIGNAL(pressed()),
+            this,
+            SLOT(on_testConnection_pressed()));
 }
 
 void DbConfigPage::on_showPassCheck_stateChanged(){
     passwordLineEdit->setEchoMode(showPassCheck->checkState() == Qt::Checked ?
                                       QLineEdit::Normal : QLineEdit::Password );
+}
+
+void DbConfigPage::on_testConnection_pressed()
+{
+    {
+        //Set DB connection
+        QSqlDatabase db = QSqlDatabase::addDatabase("QMYSQL","testDB");
+        db.setHostName(field("hostname").toString());
+        db.setDatabaseName(field("database").toString());
+        db.setUserName(field("username").toString());
+        db.setPassword(field("password").toString());
+        if (!db.open()){
+            qDebug() << __func__ << ":Connection problem!";
+            testConnection->setStyleSheet(
+                        "QPushButton { background-color : red;}");
+            connectionStatus->setText("Connection problem!");
+        } else {
+            testConnection->setStyleSheet(
+                        "QPushButton { background-color : green;}");
+            connectionStatus->setText("Connection successfull!");
+
+        }
+    }
+
+    QSqlDatabase::removeDatabase("testDB");
 }
 
 ConclusionPage::ConclusionPage(QWidget *parent)

@@ -28,28 +28,29 @@ int main(int argc, char *argv[])
     QString user = conf.loadConfig(KEY_USER);
     QString pass = conf.loadConfig(KEY_PWD);
 
-    //Set DB connection
-    QSqlDatabase db = QSqlDatabase::addDatabase("QMYSQL");
-    db.setHostName(host);
-    db.setDatabaseName(dbs);
-    db.setUserName(user);
-    db.setPassword(pass);
+    {//Set DB connection
+        QSqlDatabase db = QSqlDatabase::addDatabase("QMYSQL", "mainDB");
+        db.setHostName(host);
+        db.setDatabaseName(dbs);
+        db.setUserName(user);
+        db.setPassword(pass);
 
-    //Test DB connection
-    if (!db.open()){
-        qDebug() << __func__ << ":Connection problem!";
-
-        //Start DB config wizard
-        DbWizard *wizard = new DbWizard(mainWin);
-        //Center the wizard dialog
-        QSize mSize = wizard->sizeHint();
-        const QRect screenRect = QApplication::desktop()->screenGeometry();
-        wizard->move(QPoint(screenRect.width()/3 - mSize.width()/2,
-                              screenRect.height()/2 - mSize.height()/2 ) );
-        wizard->show();
-    } else {
-        qDebug() << __func__ <<":Connection successfull!";
+        //Test DB connection
+        if (!db.open()){
+            qDebug() << __func__ << ":Connection problem!";
+            //Start DB config wizard
+            DbWizard *wizard = new DbWizard(mainWin);
+            //Center the wizard dialog
+            QSize mSize = wizard->sizeHint();
+            const QRect screenRect = QApplication::desktop()->screenGeometry();
+            wizard->move(QPoint(screenRect.width()/3 - mSize.width()/2,
+                                screenRect.height()/2 - mSize.height()/2 ) );
+            wizard->show();
+        } else {
+            qDebug() << __func__ <<":Connection successfull!";
+        }
     }
-    db.close();
+
+    QSqlDatabase::removeDatabase("mainDB");
     return app.exec();
 }

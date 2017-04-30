@@ -45,8 +45,12 @@ private:
     QLineEdit *passwordLineEdit;
 
     QCheckBox *showPassCheck;
+    QLabel *connectionStatus;
+    QPushButton *testConnection;
+
 private slots:
     void on_showPassCheck_stateChanged();
+    void on_testConnection_pressed();
 };
 
 class ConclusionPage : public QWizardPage
