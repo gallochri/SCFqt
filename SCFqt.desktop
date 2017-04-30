@@ -1,9 +1,9 @@
-Desktop Entry]
+[Desktop Entry]
 Name=SCFqt
 Comment=Speriamo che funzioni
 GenericName=SCFqt
 Exec=SCFqt
 Icon=scfqt
-Categories=Development;
+Categories=Productivity;Databases;Clients;
 Type=Application
 X-SuSE-translate=false
