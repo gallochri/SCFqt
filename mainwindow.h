@@ -18,7 +18,7 @@ public:
     explicit MainWindow(QWidget *parent = 0);
     ~MainWindow();
     void startWizard(MainWindow *mainWin);
-
+    void setupView();
 protected:
     void closeEvent(QCloseEvent *event);
 
@@ -28,9 +28,10 @@ private slots:
     void on_action_Wizard_triggered();
 
 private:
-    void setupView();
+
     Ui::MainWindow *ui;
     DataListini *listini;
+    QSqlDatabase viewConnection();
 };
 
 #endif // MAINWINDOW_H

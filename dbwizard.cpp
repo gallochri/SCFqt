@@ -4,6 +4,7 @@
 #include <QDebug>
 #include <QSqlDatabase>
 
+#include "mainwindow.h"
 #include "dbwizard.h"
 #include "config.h"
 
@@ -33,6 +34,8 @@ void DbWizard::accept(){
     conf.writeConfig(KEY_USER,user);
     conf.writeConfig(KEY_PWD,pass);
     QDialog::accept();
+    qApp->quit();
+    QProcess::startDetached(qApp->arguments()[0], qApp->arguments());
 }
 
 IntroPage::IntroPage(QWidget *parent)
@@ -139,7 +142,7 @@ void DbConfigPage::on_testConnection_pressed()
 {
     {
         //Set new DB connection and test it.
-        QSqlDatabase db = QSqlDatabase::addDatabase("QMYSQL","testDB");
+        QSqlDatabase db = QSqlDatabase::addDatabase("QMYSQL","testConnection");
         db.setHostName(field("hostname").toString());
         db.setDatabaseName(field("database").toString());
         db.setUserName(field("username").toString());
@@ -153,11 +156,10 @@ void DbConfigPage::on_testConnection_pressed()
             testConnection->setStyleSheet(
                         "QPushButton { background-color : green;}");
             connectionStatus->setText("Connection successfull!");
-
+            db.close();
         }
     }
-    //Distroy test connection, we will use the mainConnection from connection.h
-    QSqlDatabase::removeDatabase("testDB");
+    QSqlDatabase::removeDatabase("testConnection");
 }
 
 ConclusionPage::ConclusionPage(QWidget *parent)

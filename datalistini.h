@@ -7,7 +7,7 @@ class DataListini : public QSqlTableModel
 {
     Q_OBJECT
 public:
-    DataListini(QObject *parent=0);
+    DataListini(QObject *parent, QSqlDatabase);
 private:
     void setupModel();
 };

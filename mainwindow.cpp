@@ -4,13 +4,14 @@
 #include "mainwindow.h"
 #include "dbwizard.h"
 #include "ui_mainwindow.h"
+#include "config.h"
 
 MainWindow::MainWindow(QWidget *parent) :
     QMainWindow(parent),
     ui(new Ui::MainWindow)
 {
     ui->setupUi(this);
-    //    setupView();
+    setupView();
 }
 
 MainWindow::~MainWindow()
@@ -59,9 +60,28 @@ void MainWindow::on_action_Wizard_triggered()
     startWizard(this);
 }
 
+QSqlDatabase MainWindow::viewConnection()
+{
+    Config conf;
+    QString host = conf.loadConfig(KEY_HOST);
+    QString dbs = conf.loadConfig(KEY_DB);
+    QString user = conf.loadConfig(KEY_USER);
+    QString pass = conf.loadConfig(KEY_PWD);
+
+    QSqlDatabase db = QSqlDatabase::addDatabase("QMYSQL", "viewConnection");
+    db.setHostName(host);
+    db.setDatabaseName(dbs);
+    db.setUserName(user);
+    db.setPassword(pass);
+    db.open();
+
+    return db;
+}
+
 void MainWindow::setupView()
 {
-    listini = new DataListini();
-    ui->tableView->setModel(listini);
+    QSqlDatabase db = viewConnection();
+    DataListini *listino = new DataListini(this,db);
+    ui->tableView->setModel(listino);
 }
 

@@ -1,6 +1,6 @@
 #include "datalistini.h"
 
-DataListini::DataListini(QObject *parent):QSqlTableModel(parent)
+DataListini::DataListini(QObject *parent, QSqlDatabase db):QSqlTableModel(parent, db)
 {
     setupModel();
 }
