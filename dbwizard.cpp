@@ -138,7 +138,7 @@ void DbConfigPage::on_showPassCheck_stateChanged(){
 void DbConfigPage::on_testConnection_pressed()
 {
     {
-        //Set DB connection
+        //Set new DB connection and test it.
         QSqlDatabase db = QSqlDatabase::addDatabase("QMYSQL","testDB");
         db.setHostName(field("hostname").toString());
         db.setDatabaseName(field("database").toString());
@@ -156,7 +156,7 @@ void DbConfigPage::on_testConnection_pressed()
 
         }
     }
-
+    //Distroy test connection, we will use the mainConnection from connection.h
     QSqlDatabase::removeDatabase("testDB");
 }
 

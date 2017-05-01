@@ -22,7 +22,8 @@ SOURCES += main.cpp\
 HEADERS  += mainwindow.h \
             datalistini.h \
     dbwizard.h \
-    config.h
+    config.h \
+    connection.h
 
 FORMS    += mainwindow.ui
 
