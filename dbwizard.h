@@ -6,6 +6,9 @@
 #include <QLabel>
 #include <QLineEdit>
 #include <QCheckBox>
+#include <QFile>
+#include <QSqlQuery>
+
 
 class DbWizard : public QWizard
 {
@@ -45,12 +48,17 @@ private:
     QLineEdit *passwordLineEdit;
 
     QCheckBox *showPassCheck;
-    QLabel *connectionStatus;
+    QLabel *connectionStatusLabel;
     QPushButton *testConnection;
+
+    QLabel *dbStatusLabel;
+    QPushButton *createDB;
 
 private slots:
     void on_showPassCheck_stateChanged();
     void on_testConnection_pressed();
+    void on_createDB_pressed();
+    void executeQueriesFromFile(QFile *file, QSqlQuery *query);
 };
 
 class ConclusionPage : public QWizardPage

@@ -31,7 +31,9 @@ DISTFILES += \
     .gitignore \
     LICENSE \
     README.md \
-    SCFqt.desktop
+    SCFqt.desktop \
+    doc/L001-1r16-listino-021.pdf \
+    doc/testata_listino.sql
 
 DEFINES += APP_NAME=\\\"SCFqt\\\"
 VERSION = 0.0.1

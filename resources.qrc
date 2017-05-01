@@ -9,4 +9,7 @@
         <file>images/application-exit.png</file>
         <file>images/tools-wizard.png</file>
     </qresource>
+    <qresource prefix="/sql">
+        <file>sql/testata_listino.sql</file>
+    </qresource>
 </RCC>

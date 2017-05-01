@@ -3,6 +3,7 @@
 #include <QSettings>
 #include <QDebug>
 #include <QSqlDatabase>
+#include <QSqlError>
 
 #include "mainwindow.h"
 #include "dbwizard.h"
@@ -99,9 +100,14 @@ DbConfigPage::DbConfigPage(QWidget *parent):QWizardPage(parent){
     }
     passwordLabel->setBuddy(passwordLabel);
 
-    QString status = "Test Result";
-    connectionStatus = new QLabel(status);
+    QString connStatus = "Connection status";
+    connectionStatusLabel = new QLabel(connStatus);
     testConnection = new QPushButton(tr("&Test"));
+
+    QString dbStatus = "DB status";
+    dbStatusLabel = new QLabel(dbStatus);
+    createDB = new QPushButton(tr("&Create DB"));
+    createDB->setDisabled(true);
 
     QGridLayout *layout = new QGridLayout;
     layout->addWidget(hostnameLabel, 0,0);
@@ -113,8 +119,10 @@ DbConfigPage::DbConfigPage(QWidget *parent):QWizardPage(parent){
     layout->addWidget(passwordLabel,3,0);
     layout->addWidget(passwordLineEdit,3,1);
     layout->addWidget(showPassCheck,3,2);
-    layout->addWidget(connectionStatus,4,1);
+    layout->addWidget(connectionStatusLabel,4,1);
     layout->addWidget(testConnection,4,2);
+    layout->addWidget(dbStatusLabel,5,1);
+    layout->addWidget(createDB,5,2);
     setLayout(layout);
 
     registerField("hostname", hostnameLineEdit);
@@ -141,7 +149,6 @@ void DbConfigPage::on_showPassCheck_stateChanged(){
 void DbConfigPage::on_testConnection_pressed()
 {
     {
-        //Set new DB connection and test it.
         QSqlDatabase db = QSqlDatabase::addDatabase("QMYSQL","testConnection");
         db.setHostName(field("hostname").toString());
         db.setDatabaseName(field("database").toString());
@@ -151,15 +158,84 @@ void DbConfigPage::on_testConnection_pressed()
             qDebug() << __func__ << ":Connection problem!";
             testConnection->setStyleSheet(
                         "QPushButton { background-color : red;}");
-            connectionStatus->setText("Connection problem!");
+            connectionStatusLabel->setText("<b>Connection problem!</b>");
         } else {
             testConnection->setStyleSheet(
                         "QPushButton { background-color : green;}");
-            connectionStatus->setText("Connection successfull!");
+            connectionStatusLabel->setText("<b>Connection successfull!</b>");
+            if (db.tables().contains("testatalistino")){
+                createDB->setStyleSheet(
+                            "QPushButton { background-color : green;}");
+                dbStatusLabel->setText("<b>DB tables present!</b>");
+            } else {
+                createDB->setStyleSheet(
+                            "QPushButton { background-color : red;}");
+                dbStatusLabel->setText("<b>Tables not present!</b>");
+                createDB->setDisabled(false);
+            }
             db.close();
         }
     }
     QSqlDatabase::removeDatabase("testConnection");
+}
+
+void DbConfigPage::on_createDB_pressed()
+{
+    {
+        QSqlDatabase db = QSqlDatabase::addDatabase("QMYSQL","buildConnection");
+        db.setHostName(field("hostname").toString());
+        db.setDatabaseName(field("database").toString());
+        db.setUserName(field("username").toString());
+        db.setPassword(field("password").toString());
+        if (db.open()){
+            QSqlQuery *query = new QSqlQuery(db);
+            QFile *file = new QFile(":/sql/testata_listino.sql");
+            //TODO
+            executeQueriesFromFile(*file,*query);
+        }
+
+    }
+    QSqlDatabase::removeDatabase("testConnection");
+}
+
+void DbConfigPage::executeQueriesFromFile(QFile *file, QSqlQuery *query)
+{
+    while (!file->atEnd()){
+            QByteArray readLine="";
+            QString cleanedLine;
+            QString line="";
+            bool finished=false;
+            while(!finished){
+                readLine = file->readLine();
+                cleanedLine=readLine.trimmed();
+                // remove comments at end of line
+                QStringList strings=cleanedLine.split("--");
+                cleanedLine=strings.at(0);
+
+                // remove lines with only comment, and DROP lines
+                if(!cleanedLine.startsWith("--")
+                        && !cleanedLine.startsWith("DROP")
+                        && !cleanedLine.isEmpty()){
+                    line+=cleanedLine;
+                }
+                if(cleanedLine.endsWith(";")){
+                    break;
+                }
+                if(cleanedLine.startsWith("COMMIT")){
+                    finished=true;
+                }
+            }
+
+            if(!line.isEmpty()){
+                query->exec(line);
+            }
+            if(!query->isActive()){
+                qDebug() << QSqlDatabase::drivers();
+                qDebug() <<  query->lastError();
+                qDebug() << "test executed query:"<< query->executedQuery();
+                qDebug() << "test last query:"<< query->lastQuery();
+            }
+    }
 }
 
 ConclusionPage::ConclusionPage(QWidget *parent)
