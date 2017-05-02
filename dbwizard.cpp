@@ -139,6 +139,11 @@ DbConfigPage::DbConfigPage(QWidget *parent):QWizardPage(parent){
             SIGNAL(pressed()),
             this,
             SLOT(on_testConnection_pressed()));
+
+    connect(createDB,
+            SIGNAL(pressed()),
+            this,
+            SLOT(on_createDB_pressed()));
 }
 
 void DbConfigPage::on_showPassCheck_stateChanged(){
@@ -181,6 +186,7 @@ void DbConfigPage::on_testConnection_pressed()
 
 void DbConfigPage::on_createDB_pressed()
 {
+    qDebug() << __func__ << ":button_pressed";
     {
         QSqlDatabase db = QSqlDatabase::addDatabase("QMYSQL","buildConnection");
         db.setHostName(field("hostname").toString());
@@ -188,10 +194,11 @@ void DbConfigPage::on_createDB_pressed()
         db.setUserName(field("username").toString());
         db.setPassword(field("password").toString());
         if (db.open()){
+            qDebug() << __func__ << ":db_opened";
             QSqlQuery *query = new QSqlQuery(db);
-            QFile *file = new QFile(":/sql/testata_listino.sql");
+            QFile *file = new QFile("sql/testata_listino.sql");
             //TODO
-            executeQueriesFromFile(*file,*query);
+            DbConfigPage::executeQueriesFromFile(file,query);
         }
 
     }
@@ -200,7 +207,12 @@ void DbConfigPage::on_createDB_pressed()
 
 void DbConfigPage::executeQueriesFromFile(QFile *file, QSqlQuery *query)
 {
+    qDebug() << __func__ << ":Init";
+    if (!file->open(QIODevice::ReadOnly | QIODevice::Text)){
+        qDebug() << __func__ << ":FILE_closed";
+    }
     while (!file->atEnd()){
+        qDebug() << __func__ << ":Inside while";
             QByteArray readLine="";
             QString cleanedLine;
             QString line="";
