@@ -153,12 +153,14 @@ void DbConfigPage::on_showPassCheck_stateChanged(){
 
 void DbConfigPage::on_testConnection_pressed()
 {
-    {
+    {//Create test connection with edited fields
         QSqlDatabase db = QSqlDatabase::addDatabase("QMYSQL","testConnection");
         db.setHostName(field("hostname").toString());
         db.setDatabaseName(field("database").toString());
         db.setUserName(field("username").toString());
         db.setPassword(field("password").toString());
+
+        //Test connection to DB with edited fields
         if (!db.open()){
             qDebug() << __func__ << ":Connection problem!";
             testConnection->setStyleSheet(
@@ -168,25 +170,27 @@ void DbConfigPage::on_testConnection_pressed()
             testConnection->setStyleSheet(
                         "QPushButton { background-color : green;}");
             connectionStatusLabel->setText("<b>Connection successfull!</b>");
-            if (db.tables().contains("testatalistino")){
+            //Connection to DB ok, now test DB tables
+            //TODO add more tables tests
+            if (db.tables().contains("testata_listino")){
                 createDB->setStyleSheet(
                             "QPushButton { background-color : green;}");
-                dbStatusLabel->setText("<b>DB tables present!</b>");
+                dbStatusLabel->setText("<b>DB tables OK!</b>");
             } else {
                 createDB->setStyleSheet(
                             "QPushButton { background-color : red;}");
                 dbStatusLabel->setText("<b>Tables not present!</b>");
                 createDB->setDisabled(false);
             }
-            db.close();
         }
+        //Close DB and destroy connection
+        db.close();
     }
     QSqlDatabase::removeDatabase("testConnection");
 }
 
 void DbConfigPage::on_createDB_pressed()
 {
-    qDebug() << __func__ << ":button_pressed";
     {
         QSqlDatabase db = QSqlDatabase::addDatabase("QMYSQL","buildConnection");
         db.setHostName(field("hostname").toString());
@@ -196,57 +200,57 @@ void DbConfigPage::on_createDB_pressed()
         if (db.open()){
             qDebug() << __func__ << ":db_opened";
             QSqlQuery *query = new QSqlQuery(db);
-            QFile *file = new QFile("sql/testata_listino.sql");
-            //TODO
+            QFile *file = new QFile(":/sql/testata_listino.sql");
             DbConfigPage::executeQueriesFromFile(file,query);
         }
-
+        //Close DB and destroy connection
+        db.close();
     }
     QSqlDatabase::removeDatabase("testConnection");
+    //Repeat DB connection and tables tests
+    DbConfigPage::on_testConnection_pressed();
 }
 
 void DbConfigPage::executeQueriesFromFile(QFile *file, QSqlQuery *query)
 {
-    qDebug() << __func__ << ":Init";
     if (!file->open(QIODevice::ReadOnly | QIODevice::Text)){
-        qDebug() << __func__ << ":FILE_closed";
+        qDebug() << __func__ << ":problem with file";
     }
     while (!file->atEnd()){
-        qDebug() << __func__ << ":Inside while";
-            QByteArray readLine="";
-            QString cleanedLine;
-            QString line="";
-            bool finished=false;
-            while(!finished){
-                readLine = file->readLine();
-                cleanedLine=readLine.trimmed();
-                // remove comments at end of line
-                QStringList strings=cleanedLine.split("--");
-                cleanedLine=strings.at(0);
+        QByteArray readLine="";
+        QString cleanedLine;
+        QString line="";
+        bool finished=false;
+        while(!finished){
+            readLine = file->readLine();
+            cleanedLine=readLine.trimmed();
+            // remove comments at end of line
+            QStringList strings=cleanedLine.split("--");
+            cleanedLine=strings.at(0);
 
-                // remove lines with only comment, and DROP lines
-                if(!cleanedLine.startsWith("--")
-                        && !cleanedLine.startsWith("DROP")
-                        && !cleanedLine.isEmpty()){
-                    line+=cleanedLine;
-                }
-                if(cleanedLine.endsWith(";")){
-                    break;
-                }
-                if(cleanedLine.startsWith("COMMIT")){
-                    finished=true;
-                }
+            // remove lines with only comment, and DROP lines
+            if(!cleanedLine.startsWith("--")
+                    && !cleanedLine.startsWith("DROP")
+                    && !cleanedLine.isEmpty()){
+                line+=cleanedLine;
             }
+            if(cleanedLine.endsWith(";")){
+                break;
+            }
+            if(cleanedLine.startsWith("COMMIT")){
+                finished=true;
+            }
+        }
 
-            if(!line.isEmpty()){
-                query->exec(line);
-            }
-            if(!query->isActive()){
-                qDebug() << QSqlDatabase::drivers();
-                qDebug() <<  query->lastError();
-                qDebug() << "test executed query:"<< query->executedQuery();
-                qDebug() << "test last query:"<< query->lastQuery();
-            }
+        if(!line.isEmpty()){
+            query->exec(line);
+        }
+        if(!query->isActive()){
+            qDebug() << QSqlDatabase::drivers();
+            qDebug() <<  query->lastError();
+            qDebug() << "test executed query:"<< query->executedQuery();
+            qDebug() << "test last query:"<< query->lastQuery();
+        }
     }
 }
 

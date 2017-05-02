@@ -32,11 +32,10 @@ DISTFILES += \
     LICENSE \
     README.md \
     SCFqt.desktop \
-    doc/L001-1r16-listino-021.pdf \
-    doc/testata_listino.sql
+    doc/L001-1r16-listino-021.pdf
 
 DEFINES += APP_NAME=\\\"SCFqt\\\"
-VERSION = 0.0.1
+VERSION = 0.0.2
 DEFINES += APP_VERSION=\\\"$$VERSION\\\"
 
 RESOURCES += \
