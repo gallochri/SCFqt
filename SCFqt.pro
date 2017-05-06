@@ -32,7 +32,10 @@ DISTFILES += \
     LICENSE \
     README.md \
     SCFqt.desktop \
-    doc/L001-1r16-listino-021.pdf
+    doc/L001-1r16-listino-021.pdf \
+    metel/ARNLSP.txt \
+    metel/BTILSP.TXT \
+    metel/SNR0613.txt
 
 DEFINES += APP_NAME=\\\"SCFqt\\\"
 VERSION = 0.0.2

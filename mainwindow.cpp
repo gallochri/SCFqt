@@ -2,6 +2,7 @@
 #include <QApplication>
 #include <QFileDialog>
 #include <QDebug>
+#include <QSqlError>
 
 #include "mainwindow.h"
 #include "dbwizard.h"
@@ -105,14 +106,43 @@ void MainWindow::on_import_Metel_triggered()
     }
     qDebug() << __func__ << metelFile;
     //First line to "testata_listino"
+    QSqlDatabase db = QSqlDatabase::database("viewConnection");
+    //    QSqlDatabase db = MainWindow::viewConnection();
+    QString dbName = db.databaseName();
+    QByteArray firstLine = file.readLine();
+    QString queryString = "INSERT INTO " + dbName + ".testata_listino VALUES ";
+    queryString += "(";
+    int tab[2][12] = {{0,20,23,34,40,48,56,86,125,128,136,152},
+                      {20,3,11,6,8,8,30,39,3,8,16,81}};
+    for (int i=0; i<=11; i++){
+        QString val;
+        val = QString::fromLatin1(firstLine.mid(tab[0][i],tab[1][i]));
+        int a = tab[0][i];
+        int b = tab[1][i];
+        qDebug() << __func__ << a << "-" << b << val;
+        queryString += "'" + val + "', ";
+    }
+    queryString = queryString.left(queryString.length() - 2);
+    queryString += ")";
+    qDebug() << __func__ << queryString;
 
+    QSqlQuery query = QSqlQuery(db);
+
+    if (query.exec(queryString)){
+        qDebug() << __func__ << ":Query ok!";
+    } else {
+        qDebug() << __func__ << query.lastError();
+        qDebug() << __func__ << "test last query:"<< query.lastQuery();
+    }
 
     while (!file.atEnd()) {
         QString testo;
         QByteArray line = file.readLine();
-        testo = QString::fromLatin1(line.mid(0,3));
+        testo = QString::fromLatin1(line.mid(0,20));
 
-        qDebug() << __func__ << testo;
+        //qDebug() << __func__ << testo;
     }
+
+    qDebug() << __func__ << "DNE!";
 
 }
