@@ -27,6 +27,8 @@ private slots:
     void on_actionAbout_Qt_triggered();
     void on_action_Wizard_triggered();
 
+    void on_import_Metel_triggered();
+
 private:
 
     Ui::MainWindow *ui;

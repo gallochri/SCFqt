@@ -70,6 +70,8 @@
      <string>&amp;Tools</string>
     </property>
     <addaction name="action_Wizard"/>
+    <addaction name="separator"/>
+    <addaction name="import_Metel"/>
    </widget>
    <widget class="QMenu" name="menu_Help">
     <property name="title">
@@ -94,6 +96,7 @@
     <bool>false</bool>
    </attribute>
    <addaction name="action_Wizard"/>
+   <addaction name="import_Metel"/>
    <addaction name="action_Close"/>
   </widget>
   <action name="action_Close">
@@ -148,6 +151,18 @@
    </property>
    <property name="shortcut">
     <string>Alt+W</string>
+   </property>
+  </action>
+  <action name="import_Metel">
+   <property name="icon">
+    <iconset resource="resources.qrc">
+     <normaloff>:/images/document-import.png</normaloff>:/images/document-import.png</iconset>
+   </property>
+   <property name="text">
+    <string>&amp;Import Metel® File</string>
+   </property>
+   <property name="shortcut">
+    <string>Alt+I</string>
    </property>
   </action>
  </widget>

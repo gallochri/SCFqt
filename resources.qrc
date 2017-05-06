@@ -2,12 +2,11 @@
     <qresource prefix="/">
         <file>images/suse_green_plasma_mosaic.jpg</file>
         <file>images/logo.png</file>
-        <file>images/banner.png</file>
         <file>images/watermark.png</file>
-        <file>images/background.png</file>
         <file>images/QtIcon.png</file>
         <file>images/application-exit.png</file>
         <file>images/tools-wizard.png</file>
         <file>sql/testata_listino.sql</file>
+        <file>images/document-import.png</file>
     </qresource>
 </RCC>

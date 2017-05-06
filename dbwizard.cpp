@@ -15,9 +15,6 @@ DbWizard::DbWizard(QWidget *parent) : QWizard(parent)
     addPage(new DbConfigPage);
     addPage(new ConclusionPage);
 
-    setPixmap(QWizard::BannerPixmap, QPixmap(":/images/banner.png"));
-    setPixmap(QWizard::BackgroundPixmap, QPixmap(":/images/background.png"));
-
     setWindowTitle(QString(APP_NAME).replace("_"," "));
 }
 

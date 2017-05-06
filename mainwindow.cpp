@@ -1,5 +1,7 @@
 #include <QMessageBox>
 #include <QApplication>
+#include <QFileDialog>
+#include <QDebug>
 
 #include "mainwindow.h"
 #include "dbwizard.h"
@@ -85,3 +87,26 @@ void MainWindow::setupView()
     ui->tableView->setModel(listino);
 }
 
+
+void MainWindow::on_import_Metel_triggered()
+{
+    QString selFilter = tr("TXT(*.txt *.TXT)");
+    QString metelFile = QFileDialog::getOpenFileName(this,
+                                                     tr("Open Metell® File"),
+                                                     "",
+                                                     selFilter
+                                                     );
+    if (metelFile.isEmpty()) return;
+    QFile file(metelFile);
+    if (!file.open(QIODevice::ReadOnly | QIODevice::Text)){
+        qDebug() << __func__ << "Can't read file";
+        qDebug() << __func__ << metelFile;
+        return;
+    }
+    qDebug() << __func__ << metelFile;
+    while (!file.atEnd()) {
+            QByteArray line = file.readLine();
+            qDebug() << __func__ << line;
+        }
+
+}
