@@ -105,9 +105,9 @@ void MainWindow::on_import_Metel_triggered()
         return;
     }
     qDebug() << __func__ << metelFile;
+
     //First line to "testata_listino"
     QSqlDatabase db = QSqlDatabase::database("viewConnection");
-    //    QSqlDatabase db = MainWindow::viewConnection();
     QString dbName = db.databaseName();
     QByteArray firstLine = file.readLine();
     QString queryString = "INSERT INTO " + dbName + ".testata_listino VALUES ";
@@ -135,14 +135,38 @@ void MainWindow::on_import_Metel_triggered()
         qDebug() << __func__ << "test last query:"<< query.lastQuery();
     }
 
+    //Rest file to "listino_prezzi"
+//    QSqlDatabase db = QSqlDatabase::database("viewConnection");
+//    QString dbName = db.databaseName();
     while (!file.atEnd()) {
-        QString testo;
         QByteArray line = file.readLine();
-        testo = QString::fromLatin1(line.mid(0,20));
+        QString queryString = "INSERT INTO " + dbName
+                + ".listino_prezzi VALUES ";
+        queryString += "(";
+        int tab[2][19] = {
+            {0,3,19,32,75,80,85,90,96,97,108,119,125,128,131,132,133,141,159},
+            {3,16,13,43,5,5,5,6,1,11,11,6,3,3,1,1,8,18,18}};
+        for (int i=0; i<=18; i++){
+            QString val;
+            val = QString::fromLatin1(line.mid(tab[0][i],tab[1][i]));
+            int a = tab[0][i];
+            int b = tab[1][i];
+            qDebug() << __func__ << a << "-" << b << val;
+            queryString += "'" + val + "', ";
+        }
+        queryString = queryString.left(queryString.length() - 2);
+        queryString += ")";
+        qDebug() << __func__ << queryString;
+        QSqlQuery query = QSqlQuery(db);
 
-        //qDebug() << __func__ << testo;
+        if (query.exec(queryString)){
+            qDebug() << __func__ << ":Query ok!";
+        } else {
+            qDebug() << __func__ << query.lastError();
+            qDebug() << __func__ << "test last query:"<< query.lastQuery();
+        }
     }
 
-    qDebug() << __func__ << "DNE!";
+    qDebug() << __func__ << "DONE!";
 
 }

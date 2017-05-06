@@ -7,7 +7,7 @@ DataListini::DataListini(QObject *parent, QSqlDatabase db)
 }
 
 void DataListini::setupModel(){
-    setTable("testata_listino");
+    setTable("listino_prezzi");
     setSort(0,Qt::AscendingOrder);
     setHeaderData(0,Qt::Horizontal, tr("Codice"));
     setHeaderData(1,Qt::Horizontal, tr("Descrizione"));

@@ -39,7 +39,7 @@ CREATE TABLE `listino_prezzi` (
   `qta_massima_ordinazione` int(6) NOT NULL,
   `lead_time` varchar(1) NOT NULL,
   `pz_rivenditore` float NOT NULL,
-  `pz_pubblice` float NOT NULL,
+  `pz_pubblico` float NOT NULL,
   `moltiplicatore` int(6) NOT NULL,
   `codice_valuta` varchar(3) NOT NULL,
   `unita_misura` varchar(3) NOT NULL,
