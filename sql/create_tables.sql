@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Host: localhost
--- Creato il: Mag 01, 2017 alle 18:20
+-- Creato il: Mag 06, 2017 alle 13:50
 -- Versione del server: 5.7.18-log
 -- Versione PHP: 5.6.30
 
@@ -21,6 +21,34 @@ SET time_zone = "+00:00";
 --
 -- Database: `testdb`
 --
+
+-- --------------------------------------------------------
+
+--
+-- Struttura della tabella `listino_prezzi`
+--
+
+CREATE TABLE `listino_prezzi` (
+  `sigla_marchio` varchar(3) NOT NULL,
+  `codice_prodotto` varchar(16) NOT NULL,
+  `codice_EAN` varchar(13) NOT NULL,
+  `descrizione_prodotto` varchar(43) NOT NULL,
+  `qta_cartone` int(5) NOT NULL,
+  `qta_multipla_ordinazione` int(5) NOT NULL,
+  `qta_minima_ordinazione` int(5) NOT NULL,
+  `qta_massima_ordinazione` int(6) NOT NULL,
+  `lead_time` varchar(1) NOT NULL,
+  `pz_rivenditore` float NOT NULL,
+  `pz_pubblice` float NOT NULL,
+  `moltiplicatore` int(6) NOT NULL,
+  `codice_valuta` varchar(3) NOT NULL,
+  `unita_misura` varchar(3) NOT NULL,
+  `prodotto_composto` varchar(1) NOT NULL,
+  `stato_del_prodotto` varchar(1) NOT NULL,
+  `data_variazione` date NOT NULL,
+  `famiglia_sconto` varchar(18) NOT NULL,
+  `famiglia_statistica` varchar(18) NOT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=latin1;
 
 -- --------------------------------------------------------
 

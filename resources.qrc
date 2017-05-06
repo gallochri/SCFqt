@@ -8,5 +8,6 @@
         <file>images/tools-wizard.png</file>
         <file>sql/testata_listino.sql</file>
         <file>images/document-import.png</file>
+        <file>sql/create_tables.sql</file>
     </qresource>
 </RCC>

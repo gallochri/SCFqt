@@ -197,7 +197,7 @@ void DbConfigPage::on_createDB_pressed()
         if (db.open()){
             qDebug() << __func__ << ":db_opened";
             QSqlQuery *query = new QSqlQuery(db);
-            QFile *file = new QFile(":/sql/testata_listino.sql");
+            QFile *file = new QFile(":/sql/create_tables.sql");
             DbConfigPage::executeQueriesFromFile(file,query);
         }
         //Close DB and destroy connection

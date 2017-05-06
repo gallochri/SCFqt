@@ -104,9 +104,15 @@ void MainWindow::on_import_Metel_triggered()
         return;
     }
     qDebug() << __func__ << metelFile;
+    //First line to "testata_listino"
+
+
     while (!file.atEnd()) {
-            QByteArray line = file.readLine();
-            qDebug() << __func__ << line;
-        }
+        QString testo;
+        QByteArray line = file.readLine();
+        testo = QString::fromLatin1(line.mid(0,3));
+
+        qDebug() << __func__ << testo;
+    }
 
 }
