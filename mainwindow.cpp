@@ -86,6 +86,8 @@ void MainWindow::setupView()
     QSqlDatabase db = viewConnection();
     DataListini *listino = new DataListini(this,db);
     ui->tableView->setModel(listino);
+    ui->tableView->horizontalHeader()
+            ->setSectionResizeMode(QHeaderView::ResizeToContents);
 }
 
 
