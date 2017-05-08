@@ -17,13 +17,15 @@ SOURCES += main.cpp\
         mainwindow.cpp \
         datalistini.cpp \
     dbwizard.cpp \
-    config.cpp
+    config.cpp \
+    listino.cpp
 
 HEADERS  += mainwindow.h \
             datalistini.h \
     dbwizard.h \
     config.h \
-    connection.h
+    connection.h \
+    listino.h
 
 FORMS    += mainwindow.ui
 

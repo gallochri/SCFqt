@@ -5,6 +5,7 @@
 #include <QCloseEvent>
 
 #include "datalistini.h"
+#include "listino.h"
 
 namespace Ui {
 class MainWindow;
@@ -19,6 +20,10 @@ public:
     ~MainWindow();
     void startWizard(MainWindow *mainWin);
     void setupView();
+
+    void lineToTestataListino(QSqlDatabase db, QString dbName, QFile *file);
+    void linesToListinoPrezzi(QSqlDatabase db, QString dbName, QFile *file);
+
 protected:
     void closeEvent(QCloseEvent *event);
 
