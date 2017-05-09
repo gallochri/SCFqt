@@ -194,8 +194,6 @@ void MainWindow::on_pushButtonFinder_clicked()
     QSqlDatabase db = QSqlDatabase::database("viewConnection");
     QSqlQuery query(db);
     QString word = ui->lineEditFinder->text();
-
-    qDebug() << __func__ << word;
     query.prepare("SELECT CONCAT(sigla_marchio,codice_prodotto) AS Codice,"
                   "descrizione_prodotto AS Descrizione,"
                   "pz_rivenditore/moltiplicatore/100 AS 'Prezzo Riv',"
@@ -204,9 +202,13 @@ void MainWindow::on_pushButtonFinder_clicked()
                   "moltiplicatore AS Moltiplicatore,"
                   "qta_cartone AS Cartone "
                   "FROM listino_prezzi "
-                  "WHERE codice_prodotto='" + word + "'");
+                  "WHERE CONCAT_WS('|',sigla_marchio,codice_prodotto,"
+                  "descrizione_prodotto) LIKE '%" + word + "%'");
     if (query.exec()){
-        qDebug() << __func__ << ":Query ok!";
+        QSqlQueryModel *model = new QSqlQueryModel;
+        model->setQuery(query);
+        ui->tableView->setModel(model);
+       qDebug() << __func__ << "test last query:"<< query.lastQuery();
     } else {
         qDebug() << __func__ << query.lastError();
         qDebug() << __func__ << "test last query:"<< query.lastQuery();
