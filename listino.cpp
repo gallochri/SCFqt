@@ -21,8 +21,8 @@ void Listino::setupModel(){
                   "moltiplicatore AS Moltiplicatore,"
                   "qta_cartone AS Cartone "
                   "FROM listino_prezzi "
-                  "ORDER BY sigla_marchio ASC "
-                  "LIMIT 20");
+                  "ORDER BY Codice ASC "
+                  "LIMIT 10");
 
     if (query.exec()){
         qDebug() << __func__ << ":Query ok!";

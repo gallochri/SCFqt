@@ -34,6 +34,8 @@ private slots:
 
     void on_import_Metel_triggered();
 
+    void on_pushButtonFinder_clicked();
+
 private:
 
     Ui::MainWindow *ui;

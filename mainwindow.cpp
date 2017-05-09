@@ -188,3 +188,27 @@ void MainWindow::on_import_Metel_triggered()
     qDebug() << __func__ << "DONE!";
 
 }
+
+void MainWindow::on_pushButtonFinder_clicked()
+{
+    QSqlDatabase db = QSqlDatabase::database("viewConnection");
+    QSqlQuery query(db);
+    QString word = ui->lineEditFinder->text();
+
+    qDebug() << __func__ << word;
+    query.prepare("SELECT CONCAT(sigla_marchio,codice_prodotto) AS Codice,"
+                  "descrizione_prodotto AS Descrizione,"
+                  "pz_rivenditore/moltiplicatore/100 AS 'Prezzo Riv',"
+                  "pz_pubblico/moltiplicatore/100 AS 'Prezzo Pub',"
+                  "unita_misura AS UM,"
+                  "moltiplicatore AS Moltiplicatore,"
+                  "qta_cartone AS Cartone "
+                  "FROM listino_prezzi "
+                  "WHERE codice_prodotto='" + word + "'");
+    if (query.exec()){
+        qDebug() << __func__ << ":Query ok!";
+    } else {
+        qDebug() << __func__ << query.lastError();
+        qDebug() << __func__ << "test last query:"<< query.lastQuery();
+    }
+}
