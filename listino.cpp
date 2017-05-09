@@ -20,7 +20,9 @@ void Listino::setupModel(){
                   "unita_misura AS UM,"
                   "moltiplicatore AS Moltiplicatore,"
                   "qta_cartone AS Cartone "
-                  "FROM listino_prezzi ORDER BY sigla_marchio ASC");
+                  "FROM listino_prezzi "
+                  "ORDER BY sigla_marchio ASC "
+                  "LIMIT 20");
 
     if (query.exec()){
         qDebug() << __func__ << ":Query ok!";
@@ -29,6 +31,4 @@ void Listino::setupModel(){
         qDebug() << __func__ << "test last query:"<< query.lastQuery();
     }
     setQuery(query);
-    setHeaderData(0,Qt::Horizontal, tr("Codice"));
-
 }

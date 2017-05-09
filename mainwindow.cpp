@@ -176,7 +176,6 @@ void MainWindow::on_import_Metel_triggered()
     }
     qDebug() << __func__ << metelFile;
 
-
     QSqlDatabase db = QSqlDatabase::database("viewConnection");
     QString dbName = db.databaseName();
 
