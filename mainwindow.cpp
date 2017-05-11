@@ -167,17 +167,47 @@ void MainWindow::on_import_Metel_triggered()
                                          tr("Open Metel® File"),
                                          "",
                                          selFilter);
-    if (metelFile.isEmpty()) return;
+    if (metelFile.isEmpty()){
+        return;
+    }
+
     QFile *file = new QFile(metelFile);
+
     if (!file->open(QIODevice::ReadOnly | QIODevice::Text)){
         qDebug() << __func__ << "Can't read file";
         qDebug() << __func__ << metelFile;
         return;
     }
+
     qDebug() << __func__ << metelFile;
 
     QSqlDatabase db = QSqlDatabase::database("viewConnection");
     QString dbName = db.databaseName();
+
+    QMessageBox metelFileInfo;
+    metelFileInfo.information(0, qApp->tr("Metel File Import Information"),
+                              qApp->tr("File is ready for import"),
+                              QMessageBox::Ok,
+                              QMessageBox::Cancel);
+    metelFileInfo.setText("<b>File name:<\b> " + metelFile + "\n");
+    metelFileInfo.setDefaultButton(QMessageBox::Ok);
+    int ret = metelFile.exec();
+    switch (ret) {
+      case QMessageBox::Ok:
+          // Don't Save was clicked
+          break;
+      case QMessageBox::Cancel:
+          // Cancel was clicked
+          break;
+      default:
+          // should never be reached
+          break;
+    }
+    if (db.open()){
+        QMessageBox::information(0,qApp->tr("testo"),
+                                 QMessageBox::Ok,
+                                 QMessageBox::Cancel);
+    }
 
     //First line to "testata_listino"
     lineToTestataListino(db, dbName, file);
