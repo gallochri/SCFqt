@@ -81,7 +81,7 @@ QSqlDatabase MainWindow::viewConnection()
 void MainWindow::setupView()
 {
     QSqlDatabase db = viewConnection();
-//    DataListini *listino = new DataListini(this,db);
+    //    DataListini *listino = new DataListini(this,db);
     Listino *listino = new Listino(this);
     ui->tableView->setModel(listino);
     ui->tableView->horizontalHeader()
@@ -162,11 +162,12 @@ void MainWindow::linesToListinoPrezzi(QSqlDatabase db, QString dbName,
 
 void MainWindow::on_import_Metel_triggered()
 {
+    //Select metel file QFileDialog
     QString selFilter = tr("TXT(*.txt *.TXT)");
-    QString metelFile =QFileDialog::getOpenFileName(this,
-                                         tr("Open Metel® File"),
-                                         "",
-                                         selFilter);
+    QString metelFile = QFileDialog::getOpenFileName(this,
+                                                     tr("Open Metel® File"),
+                                                     "",
+                                                     selFilter);
     if (metelFile.isEmpty()){
         return;
     }
@@ -175,39 +176,63 @@ void MainWindow::on_import_Metel_triggered()
 
     if (!file->open(QIODevice::ReadOnly | QIODevice::Text)){
         qDebug() << __func__ << "Can't read file";
-        qDebug() << __func__ << metelFile;
         return;
     }
+/**
+ * TODO QMessageBox with file information
+ *
+ *
+ *
+ *
+ *   //Get file name
+    QFileInfo fileInfo(file->fileName());
+    QString metelFileName = fileInfo.fileName();
 
-    qDebug() << __func__ << metelFile;
+    //Get listino Information from first line
+    QByteArray firstLine = file->readLine();
+    QString listinoInitial, listinoNumber, listinoData, listinoDescription;
 
-    QSqlDatabase db = QSqlDatabase::database("viewConnection");
-    QString dbName = db.databaseName();
+    listinoInitial = QString::fromLatin1(firstLine.mid(20,23));
+    //   listinoNumber = QString::fromLatin1(firstLine.mid(34,40));
+    //    listinoData = QString::fromLatin1(firstLine.mid(40,48));
+    listinoDescription = QString::fromLatin1(firstLine.mid(56,86));
+
+    QString msg = QString("<p><b>File name:</b> %1</p>"
+                          "<p><b>Description:</b> %2</p>"
+                          "<p><b>Initial:</b> %3</p>"
+                          "<p><b>Number:</b> %4</p>"
+                          "<p><b>Effective:</b> %5</p>")
+            .arg(metelFileName)
+            .arg(listinoInitial)
+            .arg(listinoDescription)
+            .arg(listinoNumber)
+            .arg(listinoData);
 
     QMessageBox metelFileInfo;
-    metelFileInfo.information(0, qApp->tr("Metel File Import Information"),
-                              qApp->tr("File is ready for import"),
-                              QMessageBox::Ok,
-                              QMessageBox::Cancel);
-    metelFileInfo.setText("<b>File name:<\b> " + metelFile + "\n");
+    int ret = metelFileInfo.information(
+                this,
+                qApp->tr("Metel File Import Information"),
+                msg,
+                QMessageBox::Ok,
+                QMessageBox::Cancel);
     metelFileInfo.setDefaultButton(QMessageBox::Ok);
-    int ret = metelFile.exec();
+
     switch (ret) {
-      case QMessageBox::Ok:
-          // Don't Save was clicked
-          break;
-      case QMessageBox::Cancel:
-          // Cancel was clicked
-          break;
-      default:
-          // should never be reached
-          break;
+    case QMessageBox::Ok:
+        qDebug() << "Ok pressed";
+        break;
+    case QMessageBox::Cancel:
+        qDebug() << "Cancel pressed";
+        break;
+    default:
+        qDebug() << "Nothing pressed";
+        break;
     }
-    if (db.open()){
-        QMessageBox::information(0,qApp->tr("testo"),
-                                 QMessageBox::Ok,
-                                 QMessageBox::Cancel);
-    }
+
+//    return;
+**/
+    QSqlDatabase db = QSqlDatabase::database("viewConnection");
+    QString dbName = db.databaseName();
 
     //First line to "testata_listino"
     lineToTestataListino(db, dbName, file);
@@ -238,7 +263,7 @@ void MainWindow::on_pushButtonFinder_clicked()
         QSqlQueryModel *model = new QSqlQueryModel;
         model->setQuery(query);
         ui->tableView->setModel(model);
-       qDebug() << __func__ << "test last query:"<< query.lastQuery();
+        qDebug() << __func__ << "test last query:"<< query.lastQuery();
     } else {
         qDebug() << __func__ << query.lastError();
         qDebug() << __func__ << "test last query:"<< query.lastQuery();
