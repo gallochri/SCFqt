@@ -1,19 +1,10 @@
-#include <QMessageBox>
-#include <QApplication>
-#include <QFileDialog>
-#include <QDebug>
-#include <QSqlError>
-#include <QDate>
-
 #include "mainwindow.h"
-#include "dbwizard.h"
-#include "ui_mainwindow.h"
-#include "config.h"
 
 MainWindow::MainWindow(QWidget *parent):QMainWindow(parent),
     ui(new Ui::MainWindow)
 {
     ui->setupUi(this);
+    ui->statusbar->addWidget(&productImport);
     setupView();
 }
 
@@ -108,6 +99,7 @@ void MainWindow::lineToTestataListino( QSqlDatabase db, QString dbName,
         int b = tab[1][i];
         qDebug() << __func__ << a << "-" << b << val;
         **/
+
     }
     queryString = queryString.left(queryString.length() - 2);
     queryString += ")";
@@ -125,10 +117,12 @@ void MainWindow::lineToTestataListino( QSqlDatabase db, QString dbName,
 }
 
 void MainWindow::linesToListinoPrezzi(QSqlDatabase db, QString dbName,
-                                      QFile *file)
+                                      QFile *file, int totalLines)
 {
     while (!file->atEnd()) {
+        int lineNumber;
         QByteArray line = file->readLine();
+        lineNumber++;
         QString queryString = "INSERT INTO " + dbName
                 + ".listino_prezzi VALUES (";
         int tab[2][19] = {
@@ -154,11 +148,27 @@ void MainWindow::linesToListinoPrezzi(QSqlDatabase db, QString dbName,
 
         if (query.exec(queryString)){
             qDebug() << __func__ << ":Query ok!";
+            productImport.setText(QString("Import line %1/%2")
+                                  .arg(lineNumber)
+                                  .arg(totalLines));
+            qApp->processEvents(QEventLoop::AllEvents);
         } else {
             qDebug() << __func__ << query.lastError();
             qDebug() << __func__ << "test last query:"<< query.lastQuery();
         }
     }
+    productImport.setText(QString("%1 lines imported.").arg(totalLines));
+}
+
+int MainWindow::linesCounter(QFile *file)
+{
+    int lineNr = 0;
+    while (!file->atEnd()){
+        QByteArray line = file->readLine();
+        ++lineNr;
+    }
+
+    return lineNr;
 }
 
 void MainWindow::on_import_Metel_triggered()
@@ -196,11 +206,7 @@ void MainWindow::on_import_Metel_triggered()
     listinoDate = Date.toString("dd MMMM yyyy");
     listinoDescription = QString::fromLatin1(firstLine.mid(56,30));
     //Count lines
-    int lineNr = 0;
-    while (!file->atEnd()){
-        QByteArray line = file->readLine();
-        ++lineNr;
-    }
+    int lineNr = linesCounter(file);
 
     QString msg = QString(
                 "<p><b>File name:</b> %1<br>"
@@ -216,7 +222,7 @@ void MainWindow::on_import_Metel_triggered()
             .arg(listinoInitial)
             .arg(listinoNumber)
             .arg(listinoDate);
-
+    file->close();
     QMessageBox metelFileInfo;
     int ret = metelFileInfo.information(
                 this,
@@ -227,30 +233,27 @@ void MainWindow::on_import_Metel_triggered()
     metelFileInfo.setDefaultButton(QMessageBox::Ok);
 
     switch (ret) {
-    case QMessageBox::Ok:
-        qDebug() << "Ok pressed";
-        break;
-    case QMessageBox::Cancel:
-        qDebug() << "Cancel pressed";
-        break;
-    default:
-        qDebug() << "Nothing pressed";
+    case QMessageBox::Ok:{
+        file->open(QIODevice::ReadOnly | QIODevice::Text);
+        QSqlDatabase db = QSqlDatabase::database("viewConnection");
+        QString dbName = db.databaseName();
+
+        //First line to "testata_listino"
+        lineToTestataListino(db, dbName, file);
+
+        //The Rest file to "listino_prezzi"
+        linesToListinoPrezzi(db, dbName, file, lineNr);
+
+        qDebug() << __func__ << "DONE!";
         break;
     }
 
-    return;
+    case QMessageBox::Cancel:
+        break;
 
-    QSqlDatabase db = QSqlDatabase::database("viewConnection");
-    QString dbName = db.databaseName();
-
-    //First line to "testata_listino"
-    lineToTestataListino(db, dbName, file);
-
-    //The Rest file to "listino_prezzi"
-    linesToListinoPrezzi(db, dbName, file);
-
-    qDebug() << __func__ << "DONE!";
-
+    default:
+        break;
+    }
 }
 
 void MainWindow::on_pushButtonFinder_clicked()
