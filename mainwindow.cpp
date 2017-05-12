@@ -3,6 +3,7 @@
 #include <QFileDialog>
 #include <QDebug>
 #include <QSqlError>
+#include <QDate>
 
 #include "mainwindow.h"
 #include "dbwizard.h"
@@ -178,35 +179,43 @@ void MainWindow::on_import_Metel_triggered()
         qDebug() << __func__ << "Can't read file";
         return;
     }
-/**
- * TODO QMessageBox with file information
- *
- *
- *
- *
- *   //Get file name
+
+    //Get file name
     QFileInfo fileInfo(file->fileName());
     QString metelFileName = fileInfo.fileName();
 
     //Get listino Information from first line
     QByteArray firstLine = file->readLine();
-    QString listinoInitial, listinoNumber, listinoData, listinoDescription;
+    QString listinoInitial, listinoNumber, listinoDate, listinoDescription;
 
-    listinoInitial = QString::fromLatin1(firstLine.mid(20,23));
-    //   listinoNumber = QString::fromLatin1(firstLine.mid(34,40));
-    //    listinoData = QString::fromLatin1(firstLine.mid(40,48));
-    listinoDescription = QString::fromLatin1(firstLine.mid(56,86));
+    listinoInitial = QString::fromLatin1(firstLine.mid(20,3));
+    listinoNumber = QString::fromLatin1(firstLine.mid(34,6));
+    //TODO try to improve date conversion
+    listinoDate = QString::fromLatin1(firstLine.mid(40,8));
+    QDate Date = QDate::fromString(listinoDate,"yyyyMMdd");
+    listinoDate = Date.toString("dd MMMM yyyy");
+    listinoDescription = QString::fromLatin1(firstLine.mid(56,30));
+    //Count lines
+    int lineNr = 0;
+    while (!file->atEnd()){
+        QByteArray line = file->readLine();
+        ++lineNr;
+    }
 
-    QString msg = QString("<p><b>File name:</b> %1</p>"
-                          "<p><b>Description:</b> %2</p>"
-                          "<p><b>Initial:</b> %3</p>"
-                          "<p><b>Number:</b> %4</p>"
-                          "<p><b>Effective:</b> %5</p>")
+    QString msg = QString(
+                "<p><b>File name:</b> %1<br>"
+                "<b>Description:</b> %2<br>"
+                "<b>Number of products:</b> %3<br>"
+                "<b>Initial:</b> %4<br>"
+                "<b>Number:</b> %5 <br>"
+                "<b>Effective:</b> %6</p>"
+                "<p><b>Import the file?</b></p>")
             .arg(metelFileName)
-            .arg(listinoInitial)
             .arg(listinoDescription)
+            .arg(lineNr)
+            .arg(listinoInitial)
             .arg(listinoNumber)
-            .arg(listinoData);
+            .arg(listinoDate);
 
     QMessageBox metelFileInfo;
     int ret = metelFileInfo.information(
@@ -229,8 +238,8 @@ void MainWindow::on_import_Metel_triggered()
         break;
     }
 
-//    return;
-**/
+    return;
+
     QSqlDatabase db = QSqlDatabase::database("viewConnection");
     QString dbName = db.databaseName();
 
