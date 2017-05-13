@@ -30,7 +30,7 @@ public:
     void startWizard(MainWindow *mainWin);
     void setupView();
 
-    void lineToTestataListino(QSqlDatabase db, QString dbName, QFile *file);
+    bool lineToTestataListino(QSqlDatabase db, QString dbName, QFile *file);
     void linesToListinoPrezzi(QSqlDatabase db, QString dbName, QFile *file,
                               int totalLines);
 

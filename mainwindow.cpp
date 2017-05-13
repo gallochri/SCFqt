@@ -82,7 +82,7 @@ void MainWindow::setupView()
 }
 
 
-void MainWindow::lineToTestataListino( QSqlDatabase db, QString dbName,
+bool MainWindow::lineToTestataListino( QSqlDatabase db, QString dbName,
                                        QFile *file)
 {
     QByteArray firstLine = file->readLine();
@@ -93,27 +93,23 @@ void MainWindow::lineToTestataListino( QSqlDatabase db, QString dbName,
         QString val;
         val = QString::fromLatin1(firstLine.mid(tab[0][i],tab[1][i]));
         queryString += "'" + val + "', ";
-
-        /**Print values
-        int a = tab[0][i];
-        int b = tab[1][i];
-        qDebug() << __func__ << a << "-" << b << val;
-        **/
-
     }
     queryString = queryString.left(queryString.length() - 2);
     queryString += ")";
-    /**Print queryString
-    qDebug() << __func__ << queryString;
-    **/
+
     QSqlQuery query = QSqlQuery(db);
 
-    if (query.exec(queryString)){
-        qDebug() << __func__ << ":Query ok!";
-    } else {
+    if (!query.exec(queryString)){
         qDebug() << __func__ << query.lastError();
-        qDebug() << __func__ << "test last query:"<< query.lastQuery();
+        qDebug() << __func__ << query.lastQuery();
+        QMessageBox queryError;
+        queryError.critical(this,
+                            qApp->tr("Import error!"),
+                            query.lastError().text(),
+                            QMessageBox::Abort);
+        return false;
     }
+    return true;
 }
 
 void MainWindow::linesToListinoPrezzi(QSqlDatabase db, QString dbName,
@@ -239,12 +235,10 @@ void MainWindow::on_import_Metel_triggered()
         QString dbName = db.databaseName();
 
         //First line to "testata_listino"
-        lineToTestataListino(db, dbName, file);
-
-        //The Rest file to "listino_prezzi"
-        linesToListinoPrezzi(db, dbName, file, lineNr);
-
-        qDebug() << __func__ << "DONE!";
+        if (lineToTestataListino(db, dbName, file)){
+            //The Rest file to "listino_prezzi"
+            linesToListinoPrezzi(db, dbName, file, lineNr);
+        }
         break;
     }
 
