@@ -31,7 +31,7 @@ public:
     void setupView();
 
     bool lineToTestataListino(QSqlDatabase db, QString dbName, QFile *file);
-    void linesToListinoPrezzi(QSqlDatabase db, QString dbName, QFile *file,
+    bool linesToListinoPrezzi(QSqlDatabase db, QString dbName, QFile *file,
                               int totalLines);
 
     int linesCounter(QFile *file);

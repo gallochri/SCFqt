@@ -112,7 +112,7 @@ bool MainWindow::lineToTestataListino( QSqlDatabase db, QString dbName,
     return true;
 }
 
-void MainWindow::linesToListinoPrezzi(QSqlDatabase db, QString dbName,
+bool MainWindow::linesToListinoPrezzi(QSqlDatabase db, QString dbName,
                                       QFile *file, int totalLines)
 {
     while (!file->atEnd()) {
@@ -128,22 +128,12 @@ void MainWindow::linesToListinoPrezzi(QSqlDatabase db, QString dbName,
             QString val;
             val = QString::fromLatin1(line.mid(tab[0][i],tab[1][i]));
             queryString += "'" + val + "', ";
-
-            /**Print values
-            int a = tab[0][i];
-            int b = tab[1][i];
-            qDebug() << __func__ << a << "-" << b << val;
-            **/
         }
         queryString = queryString.left(queryString.length() - 2);
         queryString += ")";
-        /**Print queryString
-        qDebug() << __func__ << queryString;
-        **/
         QSqlQuery query = QSqlQuery(db);
 
         if (query.exec(queryString)){
-            qDebug() << __func__ << ":Query ok!";
             productImport.setText(QString("Import line %1/%2")
                                   .arg(lineNumber)
                                   .arg(totalLines));
@@ -151,9 +141,16 @@ void MainWindow::linesToListinoPrezzi(QSqlDatabase db, QString dbName,
         } else {
             qDebug() << __func__ << query.lastError();
             qDebug() << __func__ << "test last query:"<< query.lastQuery();
+            QMessageBox queryError;
+            queryError.critical(this,
+                                qApp->tr("Import error!"),
+                                query.lastError().text(),
+                                QMessageBox::Abort);
+            return false;
         }
     }
     productImport.setText(QString("%1 lines imported.").arg(totalLines));
+    return true;
 }
 
 int MainWindow::linesCounter(QFile *file)
@@ -237,7 +234,11 @@ void MainWindow::on_import_Metel_triggered()
         //First line to "testata_listino"
         if (lineToTestataListino(db, dbName, file)){
             //The Rest file to "listino_prezzi"
-            linesToListinoPrezzi(db, dbName, file, lineNr);
+            if (linesToListinoPrezzi(db, dbName, file, lineNr)){
+                qDebug() << __func__ << "Ok, all file imported";
+            } else {
+                qDebug() << __func__ << "Problem at line___";
+            }
         }
         break;
     }
