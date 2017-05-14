@@ -60,7 +60,6 @@ QSqlDatabase MainWindow::viewConnection()
     QString dbs = conf.loadConfig(KEY_DB);
     QString user = conf.loadConfig(KEY_USER);
     QString pass = conf.loadConfig(KEY_PWD);
-
     QSqlDatabase db = QSqlDatabase::addDatabase("QMYSQL", "viewConnection");
     db.setHostName(host);
     db.setDatabaseName(dbs);
@@ -78,7 +77,6 @@ void MainWindow::setupView()
     ui->tableView->setModel(listino);
     ui->tableView->horizontalHeader()
             ->setSectionResizeMode(QHeaderView::ResizeToContents);
-
 }
 
 
@@ -96,12 +94,8 @@ bool MainWindow::lineToTestataListino( QSqlDatabase db, QString dbName,
     }
     queryString = queryString.left(queryString.length() - 2);
     queryString += ")";
-
     QSqlQuery query = QSqlQuery(db);
-
     if (!query.exec(queryString)){
-        qDebug() << __func__ << query.lastError();
-        qDebug() << __func__ << query.lastQuery();
         QMessageBox queryError;
         queryError.critical(this,
                             qApp->tr("Import error!"),
@@ -127,7 +121,7 @@ bool MainWindow::linesToListinoPrezzi(QSqlDatabase db, QString dbName,
         for (int i=0; i<=18; i++){
             QString val;
             val = QString::fromLatin1(line.mid(tab[0][i],tab[1][i]));
-            queryString += "'" + val + "', ";
+            queryString += "\"" + val + "\", ";
         }
         queryString = queryString.left(queryString.length() - 2);
         queryString += ")";
@@ -139,12 +133,11 @@ bool MainWindow::linesToListinoPrezzi(QSqlDatabase db, QString dbName,
                                   .arg(totalLines));
             qApp->processEvents(QEventLoop::AllEvents);
         } else {
-            qDebug() << __func__ << query.lastError();
-            qDebug() << __func__ << "test last query:"<< query.lastQuery();
+            QString msg(query.lastError().text());
             QMessageBox queryError;
             queryError.critical(this,
-                                qApp->tr("Import error!"),
-                                query.lastError().text(),
+                                QString("Error at line: %1").arg(lineNumber),
+                                msg,
                                 QMessageBox::Abort);
             return false;
         }

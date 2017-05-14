@@ -19,7 +19,6 @@
 namespace Ui {
 class MainWindow;
 }
-
 class MainWindow : public QMainWindow
 {
     Q_OBJECT
@@ -51,7 +50,6 @@ private:
     DataListini *listini;
     QSqlDatabase viewConnection();
     QLabel productImport;
-
 };
 
 #endif // MAINWINDOW_H
