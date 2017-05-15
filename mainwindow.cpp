@@ -84,18 +84,18 @@ bool MainWindow::lineToTestataListino( QSqlDatabase db, QString dbName,
                                        QFile *file)
 {
     QByteArray firstLine = file->readLine();
-    QString queryString = "INSERT INTO " + dbName + ".testata_listino VALUES (";
+    QSqlQuery query = QSqlQuery(db);
+    query.prepare("INSERT INTO " + dbName + ".testata_listino VALUES ("
+                                            "?,?,?,?,?,?,?,?,?,?,?,?)");
     int tab[2][12] = {{0,20,23,34,40,48,56,86,125,128,136,152},
                       {20,3,11,6,8,8,30,39,3,8,16,81}};
     for (int i=0; i<=11; i++){
         QString val;
         val = QString::fromLatin1(firstLine.mid(tab[0][i],tab[1][i]));
-        queryString += "'" + val + "', ";
+        query.addBindValue(val);
     }
-    queryString = queryString.left(queryString.length() - 2);
-    queryString += ")";
-    QSqlQuery query = QSqlQuery(db);
-    if (!query.exec(queryString)){
+
+    if (!query.exec()){
         QMessageBox queryError;
         queryError.critical(this,
                             qApp->tr("Import error!"),
@@ -113,21 +113,20 @@ bool MainWindow::linesToListinoPrezzi(QSqlDatabase db, QString dbName,
         int lineNumber;
         QByteArray line = file->readLine();
         lineNumber++;
-        QString queryString = "INSERT INTO " + dbName
-                + ".listino_prezzi VALUES (";
+        QSqlQuery query = QSqlQuery(db);
+        query.prepare("INSERT INTO " + dbName +
+                      ".listino_prezzi VALUES ("
+                      "?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)");
         int tab[2][19] = {
             {0,3,19,32,75,80,85,90,96,97,108,119,125,128,131,132,133,141,159},
             {3,16,13,43,5,5,5,6,1,11,11,6,3,3,1,1,8,18,18}};
         for (int i=0; i<=18; i++){
             QString val;
             val = QString::fromLatin1(line.mid(tab[0][i],tab[1][i]));
-            queryString += "\"" + val + "\", ";
+            query.addBindValue(val);
         }
-        queryString = queryString.left(queryString.length() - 2);
-        queryString += ")";
-        QSqlQuery query = QSqlQuery(db);
 
-        if (query.exec(queryString)){
+        if (query.exec()){
             productImport.setText(QString("Import line %1/%2")
                                   .arg(lineNumber)
                                   .arg(totalLines));
