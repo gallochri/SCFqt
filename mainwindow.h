@@ -10,6 +10,7 @@
 #include <QSqlError>
 #include <QDate>
 #include <QElapsedTimer>
+#include <QTextCodec>
 
 #include "ui_mainwindow.h"
 #include "datalistini.h"

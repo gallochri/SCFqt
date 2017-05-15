@@ -112,20 +112,22 @@ bool MainWindow::linesToListinoPrezzi(QSqlDatabase db, QString dbName,
 {
     QElapsedTimer ET;
     ET.start();
+    int lineNumber;
+    int tab[2][19] = {
+        {0,3,19,32,75,80,85,90,96,97,108,119,125,128,131,132,133,141,159},
+        {3,16,13,43,5,5,5,6,1,11,11,6,3,3,1,1,8,18,18}};
     while (!file->atEnd()) {
-        int lineNumber;
-        QByteArray line = file->readLine();
+        QByteArray encodedLine = file->readLine();
         lineNumber++;
+        QTextCodec *codec = QTextCodec::codecForName("ISO 8859-15");
+        QString line = codec->toUnicode(encodedLine);
         QSqlQuery query = QSqlQuery(db);
         query.prepare("INSERT INTO " + dbName +
                       ".listino_prezzi VALUES ("
                       "?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)");
-        int tab[2][19] = {
-            {0,3,19,32,75,80,85,90,96,97,108,119,125,128,131,132,133,141,159},
-            {3,16,13,43,5,5,5,6,1,11,11,6,3,3,1,1,8,18,18}};
         for (int i=0; i<=18; i++){
             QString val;
-            val = QString::fromLatin1(line.mid(tab[0][i],tab[1][i]));
+            val = QString(line.mid(tab[0][i],tab[1][i]));
             query.addBindValue(val);
         }
 
@@ -133,7 +135,9 @@ bool MainWindow::linesToListinoPrezzi(QSqlDatabase db, QString dbName,
             productImport.setText(QString("Import line %1/%2")
                                   .arg(lineNumber)
                                   .arg(totalLines));
-            qApp->processEvents(QEventLoop::AllEvents);
+            if(lineNumber%100 == 0){
+                qApp->processEvents(QEventLoop::AllEvents);
+            }
         } else {
             QString msg(query.lastError().text());
             QMessageBox queryError;
