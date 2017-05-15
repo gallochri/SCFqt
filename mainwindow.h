@@ -9,6 +9,7 @@
 #include <QDebug>
 #include <QSqlError>
 #include <QDate>
+#include <QElapsedTimer>
 
 #include "ui_mainwindow.h"
 #include "datalistini.h"
@@ -50,6 +51,7 @@ private:
     DataListini *listini;
     QSqlDatabase viewConnection();
     QLabel productImport;
+    QLabel timeImport;
 };
 
 #endif // MAINWINDOW_H

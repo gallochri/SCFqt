@@ -5,6 +5,7 @@ MainWindow::MainWindow(QWidget *parent):QMainWindow(parent),
 {
     ui->setupUi(this);
     ui->statusbar->addWidget(&productImport);
+    ui->statusbar->addWidget(&timeImport);
     setupView();
 }
 
@@ -109,6 +110,8 @@ bool MainWindow::lineToTestataListino( QSqlDatabase db, QString dbName,
 bool MainWindow::linesToListinoPrezzi(QSqlDatabase db, QString dbName,
                                       QFile *file, int totalLines)
 {
+    QElapsedTimer ET;
+    ET.start();
     while (!file->atEnd()) {
         int lineNumber;
         QByteArray line = file->readLine();
@@ -141,6 +144,9 @@ bool MainWindow::linesToListinoPrezzi(QSqlDatabase db, QString dbName,
             return false;
         }
     }
+    double micro_sec = ET.nsecsElapsed()/1000.0;
+    QString res = QString("%1 sec").arg(micro_sec/1000000.0, 0, 'f', 2);
+    timeImport.setText(QString("Time to import: %1").arg(res));
     productImport.setText(QString("%1 lines imported.").arg(totalLines));
     return true;
 }
