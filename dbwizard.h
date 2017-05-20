@@ -6,6 +6,7 @@
 #include <QLabel>
 #include <QLineEdit>
 #include <QCheckBox>
+#include <QComboBox>
 #include <QFile>
 #include <QSqlQuery>
 
@@ -35,6 +36,9 @@ class DbConfigPage : public QWizardPage{
 public:
     DbConfigPage(QWidget *parent = 0);
 private:
+    QLabel *driverLabel;
+    QComboBox *driverComboBox;
+
     QLabel *hostnameLabel;
     QLineEdit *hostnameLineEdit;
 

@@ -3,8 +3,10 @@
 Config::Config()
 {
     QSettings settings;
-    if (!QFile(QSettings().fileName()).exists()){
+    if (!QFile(QSettings().fileName()).exists())
+    {
         settings.beginGroup(KEY);
+        settings.setValue(KEY_DRIVER, "");
         settings.setValue(KEY_HOST, "");
         settings.setValue(KEY_DB, "");
         settings.setValue(KEY_USER, "");

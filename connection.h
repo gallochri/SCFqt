@@ -9,14 +9,16 @@
 
 static bool createConnection()
 {
-    {//Read qsettings file for DB connection
+    {
+        //Read qsettings file for DB connection
         Config conf;
+        QString driver = conf.loadConfig(KEY_DRIVER);
         QString host = conf.loadConfig(KEY_HOST);
         QString dbs = conf.loadConfig(KEY_DB);
         QString user = conf.loadConfig(KEY_USER);
         QString pass = conf.loadConfig(KEY_PWD);
 
-        QSqlDatabase db = QSqlDatabase::addDatabase("QMYSQL", "mainConnection");
+        QSqlDatabase db = QSqlDatabase::addDatabase(driver, "mainConnection");
         db.setHostName(host);
         db.setDatabaseName(dbs);
         db.setUserName(user);

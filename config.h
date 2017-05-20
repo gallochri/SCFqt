@@ -5,8 +5,9 @@
 #include <QFile>
 
 #define KEY "db_connection"
-#define KEY_HOST "hostname"
+#define KEY_DRIVER "driver"
 #define KEY_DB "database"
+#define KEY_HOST "hostname"
 #define KEY_USER "username"
 #define KEY_PWD "password"
 

@@ -60,10 +60,16 @@ DbConfigPage::DbConfigPage(QWidget *parent):QWizardPage(parent){
 
     //Read qsettings file for DB connection
     Config conf;
+    QString driver = conf.loadConfig(KEY_DRIVER);
     QString host = conf.loadConfig(KEY_HOST);
     QString dbs = conf.loadConfig(KEY_DB);
     QString user = conf.loadConfig(KEY_USER);
     QString pass = conf.loadConfig(KEY_PWD);
+
+    driverLabel = new QLabel(tr("Database driver:"));
+    driverComboBox = new QComboBox;
+    driverComboBox->addItem("MySQL","QMYSQL");
+    driverComboBox->addItem("SQLite","QSQLITE");
 
     hostnameLabel = new QLabel(tr("&Hostname:"));
     hostnameLineEdit = new QLineEdit;
@@ -107,21 +113,24 @@ DbConfigPage::DbConfigPage(QWidget *parent):QWizardPage(parent){
     createDB->setDisabled(true);
 
     QGridLayout *layout = new QGridLayout;
-    layout->addWidget(hostnameLabel, 0,0);
-    layout->addWidget(hostnameLineEdit,0,1);
-    layout->addWidget(databaseLabel,1,0);
-    layout->addWidget(databaseLineEdit,1,1);
-    layout->addWidget(usernameLabel,2,0);
-    layout->addWidget(usernameLineEdit,2,1);
-    layout->addWidget(passwordLabel,3,0);
-    layout->addWidget(passwordLineEdit,3,1);
-    layout->addWidget(showPassCheck,3,2);
-    layout->addWidget(connectionStatusLabel,4,1);
-    layout->addWidget(testConnection,4,2);
-    layout->addWidget(dbStatusLabel,5,1);
-    layout->addWidget(createDB,5,2);
+    layout->addWidget(driverLabel,0,0);
+    layout->addWidget(driverComboBox,0,1);
+    layout->addWidget(hostnameLabel, 1,0);
+    layout->addWidget(hostnameLineEdit,1,1);
+    layout->addWidget(databaseLabel,2,0);
+    layout->addWidget(databaseLineEdit,2,1);
+    layout->addWidget(usernameLabel,3,0);
+    layout->addWidget(usernameLineEdit,3,1);
+    layout->addWidget(passwordLabel,4,0);
+    layout->addWidget(passwordLineEdit,4,1);
+    layout->addWidget(showPassCheck,4,2);
+    layout->addWidget(connectionStatusLabel,5,1);
+    layout->addWidget(testConnection,5,2);
+    layout->addWidget(dbStatusLabel,6,1);
+    layout->addWidget(createDB,6,2);
     setLayout(layout);
 
+    registerField("driver", driverComboBox);
     registerField("hostname", hostnameLineEdit);
     registerField("database", databaseLineEdit);
     registerField("username", usernameLineEdit);
@@ -151,7 +160,14 @@ void DbConfigPage::on_showPassCheck_stateChanged(){
 void DbConfigPage::on_testConnection_pressed()
 {
     {//Create test connection with edited fields
-        QSqlDatabase db = QSqlDatabase::addDatabase("QMYSQL","testConnection");
+        qDebug() << __func__ << field("driver").toString();
+        QString dbdriver;
+        if (field("driver") == 0)
+        {
+            dbdriver = "QMYSQL";
+        }
+
+        QSqlDatabase db = QSqlDatabase::addDatabase(dbdriver,"testConnection");
         db.setHostName(field("hostname").toString());
         db.setDatabaseName(field("database").toString());
         db.setUserName(field("username").toString());
