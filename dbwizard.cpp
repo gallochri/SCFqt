@@ -20,12 +20,21 @@ DbWizard::DbWizard(QWidget *parent) : QWizard(parent)
 
 void DbWizard::accept(){
     Config conf;
-
+    int selDriver = field("driver").toInt();
     QString host = field("hostname").toString();
     QString db = field("database").toString();
     QString user = field("username").toString();
     QString pass = field("password").toString();
     //  qDebug() << __func__ << host << db << user << pass;
+    switch (selDriver) {
+    case 1:
+        conf.writeConfig(KEY_DRIVER,"QMYSQL");
+        break;
+    case 2:
+        conf.writeConfig(KEY_DRIVER,"QSQLITE");
+    default:
+        break;
+    }
 
     conf.writeConfig(KEY_HOST,host);
     conf.writeConfig(KEY_DB,db);
@@ -68,8 +77,14 @@ DbConfigPage::DbConfigPage(QWidget *parent):QWizardPage(parent){
 
     driverLabel = new QLabel(tr("Database driver:"));
     driverComboBox = new QComboBox;
-    driverComboBox->addItem("MySQL","QMYSQL");
-    driverComboBox->addItem("SQLite","QSQLITE");
+    QStringList drivers;
+    drivers << driver << "QMYSQL" << "QSQLITE";
+    driverComboBox->addItems(drivers);
+    driverLabel->setBuddy(driverComboBox);
+    if (driver.isEmpty())
+    {
+        driverComboBox->setCurrentIndex(1);
+    }
 
     hostnameLabel = new QLabel(tr("&Hostname:"));
     hostnameLineEdit = new QLineEdit;
@@ -130,7 +145,7 @@ DbConfigPage::DbConfigPage(QWidget *parent):QWizardPage(parent){
     layout->addWidget(createDB,6,2);
     setLayout(layout);
 
-    registerField("driver", driverComboBox);
+    registerField("driver",driverComboBox);
     registerField("hostname", hostnameLineEdit);
     registerField("database", databaseLineEdit);
     registerField("username", usernameLineEdit);
@@ -160,14 +175,8 @@ void DbConfigPage::on_showPassCheck_stateChanged(){
 void DbConfigPage::on_testConnection_pressed()
 {
     {//Create test connection with edited fields
-        qDebug() << __func__ << field("driver").toString();
-        QString dbdriver;
-        if (field("driver") == 0)
-        {
-            dbdriver = "QMYSQL";
-        }
-
-        QSqlDatabase db = QSqlDatabase::addDatabase(dbdriver,"testConnection");
+        QString driver = driverComboBox->currentText();
+        QSqlDatabase db = QSqlDatabase::addDatabase(driver,"testConnection");
         db.setHostName(field("hostname").toString());
         db.setDatabaseName(field("database").toString());
         db.setUserName(field("username").toString());
