@@ -14,7 +14,7 @@
 class DbWizard : public QWizard
 {
     Q_OBJECT
-
+    
 public:
     DbWizard(QWidget *parent = 0);
     void accept() override;
@@ -64,6 +64,7 @@ private slots:
     void on_showPassCheck_stateChanged();
     void on_testConnection_pressed();
     void on_createDB_pressed();
+    void on_driverComboBox_currentIndexChanged();
 
 };
 

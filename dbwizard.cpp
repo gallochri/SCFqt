@@ -27,21 +27,26 @@ void DbWizard::accept(){
     QString pass = field("password").toString();
     switch (selDriver) {
     case 0:
+    {
         conf.writeConfig(KEY_DBDRIVER,"QMYSQL");
         conf.writeConfig(KEY_DBNAME,db);
+        conf.writeConfig(KEY_DBHOST,host);
+        conf.writeConfig(KEY_DBUSER,user);
+        conf.writeConfig(KEY_DBPWD,pass);
         break;
+    }
     case 1:
+    {
         conf.writeConfig(KEY_DBDRIVER,"QSQLITE");
-        //createfile here
-        db = conf.configPath() + "_"  + db;
         conf.writeConfig(KEY_DBNAME,db);
+        conf.writeConfig(KEY_DBHOST,"");
+        conf.writeConfig(KEY_DBUSER,"");
+        conf.writeConfig(KEY_DBPWD,"");
+        break;
+    }
     default:
         break;
     }
-
-    conf.writeConfig(KEY_DBHOST,host);
-    conf.writeConfig(KEY_DBUSER,user);
-    conf.writeConfig(KEY_DBPWD,pass);
     QDialog::accept();
     qApp->quit();
     QProcess::startDetached(qApp->arguments()[0], qApp->arguments());
@@ -93,7 +98,8 @@ DbConfigPage::DbConfigPage(QWidget *parent):QWizardPage(parent){
     hostnameLabel = new QLabel(tr("&Hostname:"));
     hostnameLineEdit = new QLineEdit;
     hostnameLabel->setBuddy(hostnameLineEdit);
-    if (host.isEmpty()){
+    if (host.isEmpty())
+    {
         hostnameLineEdit->setPlaceholderText("www.example.com or 192.168.10.1");
     }
     hostnameLineEdit->setText(host);
@@ -156,6 +162,13 @@ DbConfigPage::DbConfigPage(QWidget *parent):QWizardPage(parent){
     registerField("username", usernameLineEdit);
     registerField("password", passwordLineEdit);
 
+    on_driverComboBox_currentIndexChanged();
+
+    connect(driverComboBox,
+            SIGNAL(currentIndexChanged(int)),
+            this,
+            SLOT(on_driverComboBox_currentIndexChanged()));
+
     connect(showPassCheck,
             SIGNAL(stateChanged(int)),
             this,
@@ -181,14 +194,15 @@ void DbConfigPage::on_testConnection_pressed()
 {
     {//Create test connection with edited fields
         QString driver = driverComboBox->currentText();
+        QString database = field("database").toString();
         QSqlDatabase db = QSqlDatabase::addDatabase(driver,"testConnection");
         db.setHostName(field("hostname").toString());
-        db.setDatabaseName(field("database").toString());
+        db.setDatabaseName(database);
         db.setUserName(field("username").toString());
         db.setPassword(field("password").toString());
 
         //Test connection to DB with edited fields
-        if (!db.open()){
+        if (!db.open() || database.isEmpty()){
             qDebug() << __func__ << ":Connection problem!";
             testConnection->setStyleSheet(
                         "QPushButton { background-color : red;}");
@@ -197,6 +211,16 @@ void DbConfigPage::on_testConnection_pressed()
             testConnection->setStyleSheet(
                         "QPushButton { background-color : green;}");
             connectionStatusLabel->setText("<b>Connection successfull!</b>");
+            if (driverComboBox->currentIndex() == 1){
+                Config conf;
+                QString dbFilePath = conf.configPath() + "/" + database;
+                QFileInfo dbFile(dbFilePath);
+                if (!dbFile.isFile()){
+                    QFile *dbFile = new QFile(dbFilePath);
+                    dbFile->open(QIODevice::ReadWrite | QIODevice::Text);
+                    dbFile->close();
+                }
+            }
             //Connection to DB ok, now test DB tables
             //TODO add more tables tests
             if (db.tables().contains("testata_listino")){
@@ -227,6 +251,7 @@ void DbConfigPage::on_createDB_pressed()
         db.setPassword(field("password").toString());
         if (db.open()){
             qDebug() << __func__ << ":db_opened";
+            //TODO code for SQLite DB
             QSqlQuery *query = new QSqlQuery(db);
             QFile *file = new QFile(":/sql/create_tables.sql");
             DbConfigPage::executeQueriesFromFile(file,query);
@@ -237,6 +262,20 @@ void DbConfigPage::on_createDB_pressed()
     QSqlDatabase::removeDatabase("buildConnection");
     //Repeat DB connection and tables tests
     DbConfigPage::on_testConnection_pressed();
+}
+
+void DbConfigPage::on_driverComboBox_currentIndexChanged()
+{
+    if (driverComboBox->currentIndex() == 1)
+    {
+        hostnameLineEdit->setDisabled(1);
+        usernameLineEdit->setDisabled(1);
+        passwordLineEdit->setDisabled(1);
+    } else {
+        hostnameLineEdit->setEnabled(1);
+        usernameLineEdit->setEnabled(1);
+        passwordLineEdit->setEnabled(1);
+    }
 }
 
 void DbConfigPage::executeQueriesFromFile(QFile *file, QSqlQuery *query)
