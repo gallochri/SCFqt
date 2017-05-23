@@ -58,11 +58,12 @@ void MainWindow::on_action_Wizard_triggered()
 QSqlDatabase MainWindow::viewConnection()
 {
     Config conf;
-    QString host = conf.loadConfig(KEY_HOST);
-    QString dbs = conf.loadConfig(KEY_DB);
-    QString user = conf.loadConfig(KEY_USER);
-    QString pass = conf.loadConfig(KEY_PWD);
-    QSqlDatabase db = QSqlDatabase::addDatabase("QMYSQL", "viewConnection");
+    QString driver = conf.loadConfig(KEY_DBDRIVER);
+    QString host = conf.loadConfig(KEY_DBHOST);
+    QString dbs = conf.loadConfig(KEY_DBNAME);
+    QString user = conf.loadConfig(KEY_DBUSER);
+    QString pass = conf.loadConfig(KEY_DBPWD);
+    QSqlDatabase db = QSqlDatabase::addDatabase(driver, "viewConnection");
     db.setHostName(host);
     db.setDatabaseName(dbs);
     db.setUserName(user);

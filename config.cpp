@@ -5,12 +5,12 @@ Config::Config()
     QSettings settings;
     if (!QFile(QSettings().fileName()).exists())
     {
-        settings.beginGroup(KEY);
-        settings.setValue(KEY_DRIVER, "");
-        settings.setValue(KEY_HOST, "");
-        settings.setValue(KEY_DB, "");
-        settings.setValue(KEY_USER, "");
-        settings.setValue(KEY_PWD, "");
+        settings.beginGroup(KEY_DB);
+        settings.setValue(KEY_DBDRIVER, "");
+        settings.setValue(KEY_DBHOST, "");
+        settings.setValue(KEY_DBNAME, "");
+        settings.setValue(KEY_DBUSER, "");
+        settings.setValue(KEY_DBPWD, "");
         settings.endGroup();
     }
 }
@@ -18,17 +18,25 @@ Config::Config()
 QString Config::loadConfig(QString key)
 {
     QSettings settings;
-    settings.beginGroup(KEY);
-
+    settings.beginGroup(KEY_DB);
     QString configValue = settings.value(key).toString();
     settings.endGroup();
     return configValue;
 }
 
+QString Config::configPath()
+{
+    QSettings settings;
+    QFileInfo file(settings.fileName());
+    QString path = file.absolutePath();
+    qDebug() << __func__ << path;
+    return path;
+}
+
 void Config::writeConfig(QString key, QString val)
 {
     QSettings settings;
-    settings.beginGroup(KEY);
+    settings.beginGroup(KEY_DB);
     settings.setValue(key,val);
     settings.endGroup();
 }

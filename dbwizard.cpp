@@ -25,21 +25,23 @@ void DbWizard::accept(){
     QString db = field("database").toString();
     QString user = field("username").toString();
     QString pass = field("password").toString();
-    //  qDebug() << __func__ << host << db << user << pass;
     switch (selDriver) {
-    case 1:
-        conf.writeConfig(KEY_DRIVER,"QMYSQL");
+    case 0:
+        conf.writeConfig(KEY_DBDRIVER,"QMYSQL");
+        conf.writeConfig(KEY_DBNAME,db);
         break;
-    case 2:
-        conf.writeConfig(KEY_DRIVER,"QSQLITE");
+    case 1:
+        conf.writeConfig(KEY_DBDRIVER,"QSQLITE");
+        //createfile here
+        db = conf.configPath() + "_"  + db;
+        conf.writeConfig(KEY_DBNAME,db);
     default:
         break;
     }
 
-    conf.writeConfig(KEY_HOST,host);
-    conf.writeConfig(KEY_DB,db);
-    conf.writeConfig(KEY_USER,user);
-    conf.writeConfig(KEY_PWD,pass);
+    conf.writeConfig(KEY_DBHOST,host);
+    conf.writeConfig(KEY_DBUSER,user);
+    conf.writeConfig(KEY_DBPWD,pass);
     QDialog::accept();
     qApp->quit();
     QProcess::startDetached(qApp->arguments()[0], qApp->arguments());
@@ -69,17 +71,19 @@ DbConfigPage::DbConfigPage(QWidget *parent):QWizardPage(parent){
 
     //Read qsettings file for DB connection
     Config conf;
-    QString driver = conf.loadConfig(KEY_DRIVER);
-    QString host = conf.loadConfig(KEY_HOST);
-    QString dbs = conf.loadConfig(KEY_DB);
-    QString user = conf.loadConfig(KEY_USER);
-    QString pass = conf.loadConfig(KEY_PWD);
+    QString driver = conf.loadConfig(KEY_DBDRIVER);
+    QString host = conf.loadConfig(KEY_DBHOST);
+    QString dbs = conf.loadConfig(KEY_DBNAME);
+    QString user = conf.loadConfig(KEY_DBUSER);
+    QString pass = conf.loadConfig(KEY_DBPWD);
 
     driverLabel = new QLabel(tr("Database driver:"));
     driverComboBox = new QComboBox;
     QStringList drivers;
-    drivers << driver << "QMYSQL" << "QSQLITE";
+    drivers << "QMYSQL" << "QSQLITE";
+    int driverIndex = drivers.indexOf(driver);
     driverComboBox->addItems(drivers);
+    driverComboBox->setCurrentIndex(driverIndex);
     driverLabel->setBuddy(driverComboBox);
     if (driver.isEmpty())
     {
@@ -146,6 +150,7 @@ DbConfigPage::DbConfigPage(QWidget *parent):QWizardPage(parent){
     setLayout(layout);
 
     registerField("driver",driverComboBox);
+    setField("driver",driverIndex);
     registerField("hostname", hostnameLineEdit);
     registerField("database", databaseLineEdit);
     registerField("username", usernameLineEdit);
@@ -214,7 +219,8 @@ void DbConfigPage::on_testConnection_pressed()
 void DbConfigPage::on_createDB_pressed()
 {
     {
-        QSqlDatabase db = QSqlDatabase::addDatabase("QMYSQL","buildConnection");
+        QString driver = driverComboBox->currentText();
+        QSqlDatabase db = QSqlDatabase::addDatabase(driver,"buildConnection");
         db.setHostName(field("hostname").toString());
         db.setDatabaseName(field("database").toString());
         db.setUserName(field("username").toString());
@@ -228,7 +234,7 @@ void DbConfigPage::on_createDB_pressed()
         //Close DB and destroy connection
         db.close();
     }
-    QSqlDatabase::removeDatabase("testConnection");
+    QSqlDatabase::removeDatabase("buildConnection");
     //Repeat DB connection and tables tests
     DbConfigPage::on_testConnection_pressed();
 }
@@ -268,10 +274,10 @@ void DbConfigPage::executeQueriesFromFile(QFile *file, QSqlQuery *query)
             query->exec(line);
         }
         if(!query->isActive()){
-            qDebug() << QSqlDatabase::drivers();
-            qDebug() <<  query->lastError();
-            qDebug() << "test executed query:"<< query->executedQuery();
-            qDebug() << "test last query:"<< query->lastQuery();
+//            qDebug() << QSqlDatabase::drivers();
+            qDebug() << __func__ <<  query->lastError();
+//            qDebug() << "test executed query:"<< query->executedQuery();
+//            qDebug() << "test last query:"<< query->lastQuery();
         }
     }
 }

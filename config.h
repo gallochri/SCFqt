@@ -3,19 +3,22 @@
 
 #include <QSettings>
 #include <QFile>
+#include <QDir>
+#include <QDebug>
 
-#define KEY "db_connection"
-#define KEY_DRIVER "driver"
-#define KEY_DB "database"
-#define KEY_HOST "hostname"
-#define KEY_USER "username"
-#define KEY_PWD "password"
+#define KEY_DB "db_connection"
+#define KEY_DBDRIVER "driver"
+#define KEY_DBNAME "database"
+#define KEY_DBHOST "hostname"
+#define KEY_DBUSER "username"
+#define KEY_DBPWD "password"
 
 class Config
 {
 public:
     Config();
     QString loadConfig(QString key);
+    QString configPath();
     void writeConfig(QString key, QString val);
 };
 
