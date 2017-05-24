@@ -253,7 +253,7 @@ void DbConfigPage::on_createDB_pressed()
             qDebug() << __func__ << ":db_opened";
             //TODO code for SQLite DB
             QSqlQuery *query = new QSqlQuery(db);
-            QFile *file = new QFile(":/sql/create_tables.sql");
+            QFile *file = new QFile(":/sql/create_tables_"+driver+".sql");
             DbConfigPage::executeQueriesFromFile(file,query);
         }
         //Close DB and destroy connection
@@ -271,10 +271,12 @@ void DbConfigPage::on_driverComboBox_currentIndexChanged()
         hostnameLineEdit->setDisabled(1);
         usernameLineEdit->setDisabled(1);
         passwordLineEdit->setDisabled(1);
+        showPassCheck->setDisabled(1);
     } else {
         hostnameLineEdit->setEnabled(1);
         usernameLineEdit->setEnabled(1);
         passwordLineEdit->setEnabled(1);
+        showPassCheck->setEnabled(1);
     }
 }
 
@@ -314,9 +316,9 @@ void DbConfigPage::executeQueriesFromFile(QFile *file, QSqlQuery *query)
         }
         if(!query->isActive()){
 //            qDebug() << QSqlDatabase::drivers();
-            qDebug() << __func__ <<  query->lastError();
-//            qDebug() << "test executed query:"<< query->executedQuery();
-//            qDebug() << "test last query:"<< query->lastQuery();
+            qDebug() << __func__ <<  ":last Error:" << query->lastError();
+//            qDebug() << __func__ << ":test executed query:"<< query->executedQuery();
+            qDebug() << __func__ << ":test last query:"<< query->lastQuery();
         }
     }
 }

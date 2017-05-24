@@ -59,6 +59,11 @@ QSqlDatabase MainWindow::viewConnection()
 {
     Config conf;
     QString driver = conf.loadConfig(KEY_DBDRIVER);
+    if (driver.isEmpty())
+    {
+        conf.writeConfig(KEY_DBDRIVER,"QSQLITE");
+        driver = conf.loadConfig(KEY_DBDRIVER);
+    }
     QString host = conf.loadConfig(KEY_DBHOST);
     QString dbs = conf.loadConfig(KEY_DBNAME);
     QString user = conf.loadConfig(KEY_DBUSER);

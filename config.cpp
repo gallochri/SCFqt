@@ -29,7 +29,6 @@ QString Config::configPath()
     QSettings settings;
     QFileInfo file(settings.fileName());
     QString path = file.absolutePath();
-    qDebug() << __func__ << path;
     return path;
 }
 

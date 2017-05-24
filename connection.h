@@ -11,6 +11,7 @@ static bool createConnection()
 {
     {
         //Read qsettings file for DB connection
+        qDebug() << __func__<< ":Load config";
         Config conf;
         QString driver = conf.loadConfig(KEY_DBDRIVER);
         if (driver.isEmpty())

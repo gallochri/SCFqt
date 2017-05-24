@@ -7,6 +7,7 @@
         <file>images/application-exit.png</file>
         <file>images/tools-wizard.png</file>
         <file>images/document-import.png</file>
-        <file>sql/create_tables.sql</file>
+        <file>sql/create_tables_QSQLITE.sql</file>
+        <file>sql/create_tables_QMYSQL.sql</file>
     </qresource>
 </RCC>
