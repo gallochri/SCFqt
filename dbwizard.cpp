@@ -193,8 +193,10 @@ void DbConfigPage::on_showPassCheck_stateChanged(){
 void DbConfigPage::on_testConnection_pressed()
 {
     {//Create test connection with edited fields
+        Config conf;
         QString driver = driverComboBox->currentText();
         QString database = field("database").toString();
+        database = conf.configPath()+"/"+database;
         QSqlDatabase db = QSqlDatabase::addDatabase(driver,"testConnection");
         db.setHostName(field("hostname").toString());
         db.setDatabaseName(database);
@@ -243,16 +245,21 @@ void DbConfigPage::on_testConnection_pressed()
 void DbConfigPage::on_createDB_pressed()
 {
     {
+        Config conf;
         QString driver = driverComboBox->currentText();
+        QString database = field("database").toString();
+        database = conf.configPath()+"/"+database;
+        qDebug() << __func__ << database;
         QSqlDatabase db = QSqlDatabase::addDatabase(driver,"buildConnection");
         db.setHostName(field("hostname").toString());
-        db.setDatabaseName(field("database").toString());
+        db.setDatabaseName(database);
         db.setUserName(field("username").toString());
         db.setPassword(field("password").toString());
         if (db.open()){
             qDebug() << __func__ << ":db_opened";
             //TODO code for SQLite DB
             QSqlQuery *query = new QSqlQuery(db);
+
             if (driverComboBox->currentIndex() == 1)
             {
                 qDebug() << __func__ << ":Executing queries";
