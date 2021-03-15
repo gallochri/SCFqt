@@ -6,8 +6,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>800</width>
-    <height>600</height>
+    <width>1087</width>
+    <height>606</height>
    </rect>
   </property>
   <property name="minimumSize">
@@ -71,16 +71,6 @@
       </attribute>
      </widget>
     </item>
-    <item row="1" column="0">
-     <widget class="QLineEdit" name="lineEditFinder">
-      <property name="placeholderText">
-       <string/>
-      </property>
-      <property name="clearButtonEnabled">
-       <bool>true</bool>
-      </property>
-     </widget>
-    </item>
     <item row="1" column="1">
      <widget class="QPushButton" name="pushButtonFinder">
       <property name="text">
@@ -94,6 +84,16 @@
       </property>
      </widget>
     </item>
+    <item row="1" column="0">
+     <widget class="QLineEdit" name="lineEditFinder">
+      <property name="placeholderText">
+       <string/>
+      </property>
+      <property name="clearButtonEnabled">
+       <bool>true</bool>
+      </property>
+     </widget>
+    </item>
    </layout>
   </widget>
   <widget class="QMenuBar" name="menubar">
@@ -101,8 +101,8 @@
     <rect>
      <x>0</x>
      <y>0</y>
-     <width>800</width>
-     <height>23</height>
+     <width>1087</width>
+     <height>25</height>
     </rect>
    </property>
    <widget class="QMenu" name="menu_File">

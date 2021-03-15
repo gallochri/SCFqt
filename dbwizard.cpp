@@ -81,7 +81,7 @@ DbConfigPage::DbConfigPage(QWidget *parent):QWizardPage(parent){
     }
     databaseLineEdit->setText(dbs);
 
-    usernameLabel = new QLabel(tr("&User name:"));
+    usernameLabel = new QLabel(tr("&Username:"));
     usernameLineEdit = new QLineEdit;
     if (!user.isEmpty()){
         usernameLineEdit->setText(user);

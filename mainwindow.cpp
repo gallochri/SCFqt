@@ -112,7 +112,7 @@ bool MainWindow::linesToListinoPrezzi(QSqlDatabase db, QString dbName,
 {
     QElapsedTimer ET;
     ET.start();
-    int lineNumber;
+    int lineNumber = 0;
     int tab[2][19] = {
         {0,3,19,32,75,80,85,90,96,97,108,119,125,128,131,132,133,141,159},
         {3,16,13,43,5,5,5,6,1,11,11,6,3,3,1,1,8,18,18}};
